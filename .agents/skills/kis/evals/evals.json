@@ -1,0 +1,60 @@
+{
+  "skill_name": "kis",
+  "evals": [
+    {
+      "id": "bootstrap-new-project",
+      "prompt": "Use $kis for this empty repo. I want to build a browser-local habit tracker for myself. Before coding, set up the project memory and ask me only what changes the plan.",
+      "expected_output": "The agent initializes the smallest useful KIS foundation, separates Knowledge, Intent, and State, challenges weak assumptions, and stops for mode or phase approval before non-trivial implementation.",
+      "assertions": [
+        "Creates or proposes only useful files under kis/knowledge, kis/intent, and kis/state",
+        "Does not create empty boilerplate KIS files",
+        "Asks only focused questions that affect scope, risk, acceptance, or implementation direction",
+        "Does not start non-trivial implementation before an explicit work-mode or phase checkpoint"
+      ]
+    },
+    {
+      "id": "resume-existing-kis",
+      "prompt": "Use $kis and recover this project from existing KIS files. Tell me current task, blocker, proof, and next action before making changes.",
+      "expected_output": "The agent loads State first, then relevant Intent and Knowledge, summarizes operational reality, and avoids asking the user to restate information already present in KIS.",
+      "assertions": [
+        "Reads kis/state before intent or knowledge",
+        "Summarizes branch or current task, blocker, proof, and next action when present",
+        "Inspects repository files only where needed after reading KIS",
+        "Avoids mutating KIS until the current state is understood"
+      ]
+    },
+    {
+      "id": "standard-mode-specialist-unavailable",
+      "prompt": "Use $kis for a multi-file auth refactor. The ideal auth/security specialist skill is not installed. Continue with the correct process.",
+      "expected_output": "The agent identifies Standard or Phase risk, states that the specialist is unavailable, and creates a checkpoint instead of pretending the specialist ran.",
+      "assertions": [
+        "Classifies the work as Standard or Phase risk rather than Fast Mode",
+        "States the matched specialist or tool is unavailable",
+        "Offers install or enablement when supported",
+        "Continues only if the user enables the tool, reduces scope, switches to Fast Mode, or accepts fallback risk"
+      ]
+    },
+    {
+      "id": "phase-mode-written-plan",
+      "prompt": "Use $kis. We have a written plan for a risky UI flow redesign. Execute it with verification and keep KIS synchronized.",
+      "expected_output": "The agent follows Phase Mode, checks the plan before work, uses implementer/reviewer separation where available, verifies each phase, and synchronizes only changed KIS facts.",
+      "assertions": [
+        "Preflights the plan for contradictions and acceptance checks",
+        "Uses or checkpoints implementer/reviewer separation for non-trivial work",
+        "Requires actual UI or browser proof for visible UI changes",
+        "Updates State with proof and avoids duplicating stable facts across KIS layers"
+      ]
+    },
+    {
+      "id": "avoid-doc-pile",
+      "prompt": "Use $kis. Add everything we discussed today into project memory so future agents have all context.",
+      "expected_output": "The agent resists dumping conversation history, classifies only durable or operational facts, updates existing files where possible, and keeps State lean.",
+      "assertions": [
+        "Challenges the request to dump all conversation history",
+        "Classifies facts into exactly one KIS layer",
+        "Prefers updating existing KIS files over creating new files",
+        "Keeps State operational and removes stale or duplicate material"
+      ]
+    }
+  ]
+}
