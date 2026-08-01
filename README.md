@@ -28,7 +28,7 @@ That gives the project:
 AGENTS.md                  KIS block between <!-- kis:anchor:start|end --> markers
 ```
 
-Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.8.0` to pin a version.
+Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.9.0` to pin a version.
 
 This repository holds the source package under `skills/kis/`; nothing here is a live install. The installer copies it to `.agents/skills/kis` in your project, which is where every host looks.
 
