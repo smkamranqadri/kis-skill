@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-script_under_test="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/update-installed-skill.sh}"
+script_under_test="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../skills/kis/scripts" && pwd)/update-installed-skill.sh}"
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT

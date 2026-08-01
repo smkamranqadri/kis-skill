@@ -4,7 +4,7 @@ Use this when `kis/` does not exist or when joining an existing project whose KI
 
 ## New Project
 
-1. Clarify what is being built, who it is for, the problem, success criteria, constraints, and project stage.
+1. Interview the user until the foundation is clear: what is being built, who it is for, the problem, success criteria, constraints, and project stage. One question at a time, each with your recommended answer, waiting for the answer before the next.
 2. Challenge assumptions before creating long-lived project memory.
 3. Create only the useful parts of:
 
@@ -22,22 +22,17 @@ Do not create empty files.
 
 ## First Response Shape
 
-When starting a brand new project:
+When starting a brand new project, open the interview instead of dumping a questionnaire:
 
 ```text
 I'll initialize KIS for this project.
 
-Before building the foundation, I need the smallest set of facts that changes the plan:
+First question: what are we building?
 
-1. What are we building?
-2. Who is it for?
-3. What problem does it solve?
-4. What does success look like?
-5. What constraints or requirements must we respect?
-6. Is this a prototype, MVP, or production system?
+My read from what you've said so far: <recommendation>.
 ```
 
-If the user already provided enough detail, do not ask again. Build the smallest useful foundation and continue to the work-mode checkpoint.
+Then walk the rest one at a time, in dependency order: who it is for, the problem, what success looks like, hard constraints, and whether this is a prototype, MVP, or production system. Skip anything the user already answered or the repository already shows. Stop asking as soon as the foundation is decidable, and continue to the work-mode checkpoint.
 
 ## Existing Project
 

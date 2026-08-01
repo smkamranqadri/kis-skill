@@ -42,7 +42,7 @@ Security review?               -> security scan/review skill or tool
 Hand off to another session?   -> thread/handoff tool if available
 ```
 
-Use the skill names exposed in the current environment. In Codex, discover installed skills/tools through the session's available skill and tool surfaces. In Claude, use the available Skills, agents, slash commands, hooks, and local project instructions. If a routing example names a capability but the exact skill is unavailable, search installed skills/tools first, then use the install flow when supported.
+Use the skill names exposed in the current environment, whichever host you are running in. Discover what is installed through the session's own skill, agent, command, and tool surfaces rather than assuming a fixed set. If a routing example names a capability but the exact skill is unavailable, search installed skills and tools first, then use the host's install flow when supported.
 
 Skip a matched skill only with a one-line reason.
 
@@ -148,7 +148,7 @@ KIS-relevant updates:
 
 ## Install Notes
 
-When the environment supports skill installation, prefer the host's supported install mechanism. In Codex, use the available skill installer or plugin install flow instead of raw shell install commands unless the user explicitly asks for a shell-based installer. In Claude, use the environment's Skill installation/discovery path and project-local instructions.
+When the environment supports skill installation, prefer the host's supported install mechanism over raw shell commands, unless the user explicitly asks for a shell-based installer.
 
 Useful companion capability categories:
 

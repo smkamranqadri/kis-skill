@@ -22,6 +22,10 @@ Options:
                         Defaults to <target>/.agents/skills/kis.
   --force               Replace an existing install during install.
   --no-claude-link      Do not create .claude/skills/kis compatibility symlink.
+  --commands-host <n>   Command adapters: project (default: claude and pi), claude, pi,
+                        codex, or all. Only codex writes outside the project.
+  --no-commands         Do not install or refresh command adapters.
+  --no-anchor           Do not install or refresh the re-anchor hook and instruction block.
   -h, --help            Show this help.
 
 Examples:
@@ -53,6 +57,9 @@ target_root="."
 install_dir=""
 force="false"
 create_claude_link="true"
+install_commands="true"
+commands_host="project"
+install_anchor="true"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -89,6 +96,19 @@ while [[ $# -gt 0 ]]; do
       create_claude_link="false"
       shift
       ;;
+    --commands-host)
+      [[ $# -ge 2 ]] || die "--commands-host requires project, claude, pi, codex, or all"
+      commands_host="$2"
+      shift 2
+      ;;
+    --no-commands)
+      install_commands="false"
+      shift
+      ;;
+    --no-anchor)
+      install_anchor="false"
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -114,12 +134,27 @@ if [[ -z "$install_dir" ]]; then
   install_dir="$target_root/.agents/skills/kis"
 fi
 
+refresh_adapters() {
+  if [[ "$install_commands" == "true" && -x "$install_dir/scripts/install-commands.sh" ]]; then
+    "$install_dir/scripts/install-commands.sh" \
+      --target "$target_root" \
+      --skill-dir "$install_dir" \
+      --host "$commands_host"
+  fi
+
+  if [[ "$install_anchor" == "true" && -x "$install_dir/scripts/install-anchor.sh" ]]; then
+    "$install_dir/scripts/install-anchor.sh" --target "$target_root"
+  fi
+}
+
 case "$command_name" in
   install)
-    args=(--source "$source_arg" --target "$target_root")
+    args=(--source "$source_arg" --target "$target_root" --commands-host "$commands_host")
     [[ "$force" == "true" ]] && args+=(--force)
     [[ "$create_claude_link" == "false" ]] && args+=(--no-claude-link)
-    "$source_arg/.agents/skills/kis/scripts/install-skill.sh" "${args[@]}"
+    [[ "$install_commands" == "false" ]] && args+=(--no-commands)
+    [[ "$install_anchor" == "false" ]] && args+=(--no-anchor)
+    "$source_arg/scripts/install-skill.sh" "${args[@]}"
     ;;
   check)
     "$install_dir/scripts/update-installed-skill.sh" \
@@ -132,5 +167,6 @@ case "$command_name" in
       --source "$source_arg" \
       --install-dir "$install_dir" \
       --apply
+    refresh_adapters
     ;;
 esac

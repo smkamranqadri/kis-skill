@@ -67,13 +67,15 @@ normalize_skill_dir() {
     return 0
   fi
 
-  if [[ -f "$candidate/.agents/skills/kis/SKILL.md" ]]; then
-    (cd "$candidate/.agents/skills/kis" && pwd -P)
+  # source repo layout
+  if [[ -f "$candidate/skills/kis/SKILL.md" ]]; then
+    (cd "$candidate/skills/kis" && pwd -P)
     return 0
   fi
 
-  if [[ -f "$candidate/.claude/skills/kis/SKILL.md" ]]; then
-    (cd "$candidate/.claude/skills/kis" && pwd -P)
+  # installed project layout
+  if [[ -f "$candidate/.agents/skills/kis/SKILL.md" ]]; then
+    (cd "$candidate/.agents/skills/kis" && pwd -P)
     return 0
   fi
 

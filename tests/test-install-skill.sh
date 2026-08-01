@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-script_under_test="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/install-skill.sh}"
+script_under_test="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../scripts" && pwd)/install-skill.sh}"
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
 source_root="$tmp_dir/source-repo"
-source_dir="$source_root/.agents/skills/kis"
+source_dir="$source_root/skills/kis"
 target_root="$tmp_dir/target-project"
 
 write_skill() {

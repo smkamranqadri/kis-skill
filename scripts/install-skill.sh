@@ -5,14 +5,20 @@ usage() {
   cat <<'EOF'
 Usage:
   install-skill.sh --source <skill-dir-or-repo-root> [--target <project-root>] [--force] [--no-claude-link]
+                   [--commands-host project|claude|pi|codex|all]
+                   [--no-commands] [--no-anchor]
 
 Options:
-  --source <path>       Source skill package or repo root containing .agents/skills/kis.
-                        Can also be set with KIS_SKILL_SOURCE.
-  --target <path>       Project root to install into. Defaults to current directory.
-  --force               Replace an existing .agents/skills/kis install.
-  --no-claude-link      Do not create .claude/skills/kis compatibility symlink.
-  -h, --help            Show this help.
+  --source <path>            Source skill package or repo root containing .agents/skills/kis.
+                             Can also be set with KIS_SKILL_SOURCE.
+  --target <path>            Project root to install into. Defaults to current directory.
+  --force                    Replace an existing .agents/skills/kis install.
+  --no-claude-link           Do not create .claude/skills/kis compatibility symlink.
+  --commands-host <name>     Command adapters: project (default: claude and pi), claude, pi,
+                             codex, or all. Only codex writes outside the project.
+  --no-commands              Do not install command adapters.
+  --no-anchor                Do not install the re-anchor hook and instruction block.
+  -h, --help                 Show this help.
 EOF
 }
 
@@ -25,6 +31,9 @@ source_arg="${KIS_SKILL_SOURCE:-}"
 target_root="."
 force="false"
 create_claude_link="true"
+install_commands="true"
+commands_host="project"
+install_anchor="true"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -44,6 +53,19 @@ while [[ $# -gt 0 ]]; do
       ;;
     --no-claude-link)
       create_claude_link="false"
+      shift
+      ;;
+    --commands-host)
+      [[ $# -ge 2 ]] || die "--commands-host requires project, claude, pi, codex, or all"
+      commands_host="$2"
+      shift 2
+      ;;
+    --no-commands)
+      install_commands="false"
+      shift
+      ;;
+    --no-anchor)
+      install_anchor="false"
       shift
       ;;
     -h|--help)
@@ -66,13 +88,15 @@ normalize_skill_dir() {
     return 0
   fi
 
-  if [[ -f "$candidate/.agents/skills/kis/SKILL.md" ]]; then
-    (cd "$candidate/.agents/skills/kis" && pwd -P)
+  # source repo layout
+  if [[ -f "$candidate/skills/kis/SKILL.md" ]]; then
+    (cd "$candidate/skills/kis" && pwd -P)
     return 0
   fi
 
-  if [[ -f "$candidate/.claude/skills/kis/SKILL.md" ]]; then
-    (cd "$candidate/.claude/skills/kis" && pwd -P)
+  # installed project layout
+  if [[ -f "$candidate/.agents/skills/kis/SKILL.md" ]]; then
+    (cd "$candidate/.agents/skills/kis" && pwd -P)
     return 0
   fi
 
@@ -143,4 +167,19 @@ if [[ "$create_claude_link" == "true" ]]; then
   echo "Claude compatibility link: $claude_link"
 else
   echo "Claude compatibility link: skipped"
+fi
+
+if [[ "$install_commands" == "true" && -x "$install_dir/scripts/install-commands.sh" ]]; then
+  "$install_dir/scripts/install-commands.sh" \
+    --target "$target_root" \
+    --skill-dir "$install_dir" \
+    --host "$commands_host"
+else
+  echo "Command adapters: skipped"
+fi
+
+if [[ "$install_anchor" == "true" && -x "$install_dir/scripts/install-anchor.sh" ]]; then
+  "$install_dir/scripts/install-anchor.sh" --target "$target_root"
+else
+  echo "Re-anchor layer: skipped"
 fi
