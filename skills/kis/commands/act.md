@@ -29,14 +29,7 @@ PICK -> IMPLEMENT -> VERIFY/REVIEW -> RESOLVE -> INTEGRATION CHECK -> FINISH
 
 ## Proof Before Done
 
-Never mark a task done from intuition, code reading, or an agent report. Record what actually ran:
-
-```text
-Proof:
-- npm test - passed
-- npm run build - passed
-- Manual check: login flow works
-```
+Never mark a task done from intuition, code reading, or an agent report. Record what actually ran, in the Proof shape from `SKILL.md`.
 
 If verification fails, record the failure in State as the current blocker rather than marking the task done.
 

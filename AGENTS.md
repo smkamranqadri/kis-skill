@@ -22,6 +22,7 @@ Installing copies `skills/kis/` verbatim to `<target>/.agents/skills/kis`. If a 
 - `SKILL.md` is instructions to the agent at work time. It must not document the package, the installers, or this repository. That is what this file and `README.md` are for.
 - Keep command bodies in `skills/kis/commands/` host-neutral. Host wiring lives only in `skills/kis/scripts/install-commands.sh`.
 - Do not restate the same rule in `SKILL.md` and a reference. One owner per fact, the same rule KIS itself enforces.
+- Commands are the exception and restate on purpose: a command body is loaded on its own, without `SKILL.md` in context, so it has to stand alone. `SKILL.md` stays authoritative. When a command and `SKILL.md` disagree, `SKILL.md` is right and the command is the bug. Restate a rule, not its examples, and never let a command introduce a rule that nothing in `SKILL.md` or `references/` owns.
 
 ## Checks
 

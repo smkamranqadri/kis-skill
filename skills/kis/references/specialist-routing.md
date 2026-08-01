@@ -18,28 +18,17 @@ Do not silently pretend an unavailable specialist ran. Do not deadlock when a sa
 ## Common Routing
 
 ```text
-Which skill fits?              -> inspect available skills, then use the best match
-Idea unclear / need thinking?  -> brainstorming or request focused user input
-Requirements need structure?   -> brainstorming, writing-plans, or a PRD skill if installed
-Break plan into issues?        -> writing-plans or an issue-planning skill if installed
-Domain/terminology unclear?    -> domain-modeling/grilling skill if installed; otherwise inspect docs and ask focused questions
-Architecture risky?            -> architecture/system-design skill if installed; otherwise write and challenge the design explicitly
-Architecture diagram?          -> Figma/FigJam diagram skill or Mermaid, depending on the requested output
-Deep module design?            -> codebase-design/system-design skill if installed
-Implement feature or bugfix?   -> test-driven-development when behavior changes
-End-to-end / browser test?     -> browser or playwright skill/tooling when available
-Hard bug or regression?        -> systematic-debugging
-Triage incoming issues?        -> triage skill if installed; otherwise classify by impact, evidence, and next action
-Explore a design fast?         -> prototype skill if installed; otherwise use Fast Mode with clear fallback risk
-Web UI/design?                 -> frontend/design skill or the host app's frontend guidance
-React/Next.js implementation?  -> framework-specific skill if installed; otherwise follow repo patterns
-Auth / login / accounts?       -> auth-specific skill if installed; otherwise map security and session risks first
-API design?                    -> system-design/API skill if installed; otherwise define contracts and failure modes
-Mobile design?                 -> mobile/UI skill if installed; otherwise verify responsive behavior directly
-UI review?                     -> UI/design review skill plus live browser or screenshot verification
-Code review?                   -> code-review workflow or requesting-code-review skill
-Security review?               -> security scan/review skill or tool
-Hand off to another session?   -> thread/handoff tool if available
+Requirements or plan need structure? -> writing-plans, or a PRD/issue-planning skill
+Domain or terminology unclear?       -> domain-modeling or grilling skill
+Architecture or deep module design?  -> codebase-design or system-design skill
+Architecture diagram?                -> Figma/FigJam diagram skill or Mermaid, depending on the requested output
+Behavior changes?                    -> test-driven-development
+Hard bug or regression?              -> systematic-debugging
+End-to-end or browser test?          -> browser or Playwright skill/tooling
+Explore a design fast?               -> prototype skill, or Fast Mode with accepted fallback risk
+Auth, login, or accounts?            -> auth skill if installed; map session and security risks before implementing
+Code or security review?             -> code-review, requesting-code-review, or a security scan skill
+Hand off to another session?         -> thread/handoff tool
 ```
 
 Use the skill names exposed in the current environment, whichever host you are running in. Discover what is installed through the session's own skill, agent, command, and tool surfaces rather than assuming a fixed set. If a routing example names a capability but the exact skill is unavailable, search installed skills and tools first, then use the host's install flow when supported.
@@ -149,18 +138,5 @@ KIS-relevant updates:
 ## Install Notes
 
 When the environment supports skill installation, prefer the host's supported install mechanism over raw shell commands, unless the user explicitly asks for a shell-based installer.
-
-Useful companion capability categories:
-
-- brainstorming or grilling
-- PRD and issue planning
-- test-driven development
-- systematic debugging
-- browser or Playwright verification
-- frontend/UI review
-- code review
-- security review
-- architecture/system design
-- handoff or thread coordination
 
 Before installing, confirm the exact skill/plugin exists and that the install target matches the current environment. If install support is unavailable, checkpoint and ask whether to reduce scope, switch to Fast Mode, or proceed with accepted fallback risk.

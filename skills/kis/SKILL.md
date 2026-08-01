@@ -1,6 +1,6 @@
 ---
 name: kis
-description: Operate KIS project memory under `kis/`, where Knowledge holds stable facts, Intent holds goals and plans, and State holds the current task, blocker, proof, and next action, so an agent can recover a project instead of re-deriving it. Use when the repository has a `kis/` directory, when starting or resuming multi-step work, when the user asks where a project left off or what is next, when a decision, plan, blocker, proof, or status needs recording, when choosing how much process a task needs, when project memory has gone stale or contradictory, or when a project needs memory set up from scratch. Skip for one-off edits, single-file fixes, running a single command, and questions answered by reading the code.
+description: Operate KIS project memory under `kis/`, where Knowledge holds stable facts, Intent holds goals and plans, and State holds the current task, blocker, proof, and next action. Use when the repository has a `kis/` directory, when starting or resuming multi-step work or asking where it left off and what is next, when a decision, plan, blocker, proof, or status needs recording, when choosing how much process a task needs, when project memory has gone stale or contradictory, or when a project needs memory set up from scratch. Skip for trivial one-off work and questions the code already answers.
 metadata:
   version: "0.8.0"
 ---
@@ -18,19 +18,6 @@ kis/
 
 If `kis/` does not exist, read [bootstrap.md](references/bootstrap.md).
 
-## Core Rules
-
-- Load State first, then relevant Intent, then only the Knowledge needed.
-- Choose the smallest useful work mode.
-- Interview the user before non-trivial work. One question at a time, each with your recommended answer.
-- Look up facts yourself. Ask only for decisions.
-- Challenge weak requirements, risky assumptions, unnecessary complexity, and plans that do not match the user's goal.
-- Put each fact in exactly one layer.
-- Update an existing file instead of creating a new one.
-- Prove work before marking it done.
-- Synchronize only what changed.
-- Write concise operational bullets, not essays.
-
 ## Truth Hierarchy
 
 ```text
@@ -39,7 +26,7 @@ State > Intent > Knowledge > conversation > repository inspection
 
 Operational reality overrides stale plans. When sources contradict, fix the single source of truth instead of duplicating the fact.
 
-State should answer, near the top:
+State should answer the recovery questions, near the top:
 
 ```text
 What branch?  What task?  What command?  What blocker?  What's next?
@@ -69,6 +56,8 @@ LOAD -> QUESTION -> CHALLENGE -> STRUCTURE -> PLAN -> ACT -> SYNCHRONIZE
 
 Read `kis/state/*`, then the relevant `kis/intent/*`, then only the required `kis/knowledge/*`. Inspect the repository only where KIS is unclear or looks stale.
 
+Done when: you can answer the recovery questions without reading anything else.
+
 ### QUESTION
 
 Interview the user relentlessly until you reach a shared understanding of the work. This is the step that prevents wasted implementation, so do not shortcut it by assuming.
@@ -78,37 +67,40 @@ Interview the user relentlessly until you reach a shared understanding of the wo
 - Give your recommended answer with every question, and say briefly why.
 - If a fact can be found in KIS, the filesystem, the repository, or available tools, look it up instead of asking.
 - The decisions are the user's. Put each one to them and wait.
-- Do not act until the user confirms the understanding is shared.
 
 Skip the interview only in Fast Mode, and only while the task stays unambiguous and reversible.
 
+Done when: the user confirms the understanding is shared.
+
 ### CHALLENGE
 
-Challenge vague ideas, weak requirements, risky assumptions, missing edge cases, scope creep, and approaches heavier than the goal needs. Explain the practical tradeoff and offer a clearer path. Never proceed on an assumption you have not put to the user.
+Challenge vague ideas, weak requirements, risky assumptions, missing edge cases, scope creep, and approaches heavier than the goal needs. Explain the practical tradeoff and offer a clearer path.
 
 When replicating an existing product, screen, or workflow, study the reference before choosing an architecture.
 
+Done when: every assumption you are relying on has been put to the user.
+
 ### STRUCTURE
 
-Classify every new fact into exactly one layer.
-
-```text
-Knowledge = what is true / how things work
-Intent    = what we want / plan to do
-State     = what is happening now
-```
+Done when: every new fact sits in exactly one layer.
 
 ### PLAN
 
 Plan only enough to execute safely: scope, acceptance checks, risk, files likely involved, verification method, and whether a specialist or review is needed. For specialist routing, read [specialist-routing.md](references/specialist-routing.md).
 
+Done when: the user has approved the scope. In Fast Mode, when the verification method is settled.
+
 ### ACT
 
 Update State with the current task, mode, status, and verification plan. Then implement only the current scope, avoid unrelated changes, and keep changes reviewable. For written plans and Phase Mode, read [execution.md](references/execution.md).
 
+Done when: proof exists. See Proof Before Done.
+
 ### SYNCHRONIZE
 
 Ask whether Knowledge, Intent, or State changed, and update only those files. Record proof in State when it helps recovery. Do not paste implementation history into KIS. For cleanup rules and when to run a consistency sweep, read [file-hygiene.md](references/file-hygiene.md).
+
+Done when: every fact that changed sits in exactly one layer, and nothing left in `kis/` contradicts it.
 
 ## Proof Before Done
 
@@ -126,11 +118,3 @@ If verification fails, record it in State as the current blocker instead of mark
 ## Commands
 
 Each file in `commands/` is an explicit entry point into one step of this loop: `start` (LOAD), `plan`, `act`, `sync`, `check` (maintenance), and `init` (bootstrap). A command re-enters the loop; it is not a second workflow. For host adapters and the re-anchor layer, read [commands.md](references/commands.md).
-
-## References
-
-- [bootstrap.md](references/bootstrap.md): initialize KIS for a new or existing project.
-- [commands.md](references/commands.md): command entry points, host adapters, and the re-anchor layer.
-- [specialist-routing.md](references/specialist-routing.md): choose specialist skills and agents.
-- [execution.md](references/execution.md): execute written plans and Phase Mode work.
-- [file-hygiene.md](references/file-hygiene.md): organize, clean, and evolve KIS files.
