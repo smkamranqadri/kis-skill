@@ -14,7 +14,7 @@ bootstrap.sh    one-command install, check, and update entry point
 
 Installing copies `skills/kis/` verbatim to `<target>/.agents/skills/kis`. If a file does not belong in someone else's project, it does not belong in `skills/kis/`.
 
-`ACTIVE_VERSION` and `metadata.version` in `SKILL.md` must match. Release tags follow it, for example `v0.8.0`.
+`ACTIVE_VERSION` and `metadata.version` in `SKILL.md` must match. Release tags are that version prefixed with `v`.
 
 ## Rules
 
