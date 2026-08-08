@@ -10,11 +10,12 @@ echo
 echo "This project uses KIS project memory under \`kis/\`. Knowledge = stable facts. Intent = goals and plans. State = current reality."
 echo "Load State first, put each fact in one layer, prove work before marking it done, and synchronize only what changed."
 echo "Skill: .agents/skills/kis/SKILL.md"
-echo "Commands: /kis:start /kis:plan /kis:act /kis:sync /kis:check /kis:init"
+echo "Commands in .agents/skills/kis/commands/: start, plan, act, sync, check, init."
+echo "Claude /kis:start, Pi and OpenCode /kis-start, Codex /prompts:kis-start. Antigravity has no custom slash commands: name the step instead."
 echo
 
 if [[ ! -d "$kis_dir" ]]; then
-  echo "KIS is not initialized in this project. Run /kis:init before non-trivial work."
+  echo "KIS is not initialized in this project. Run the init command before non-trivial work."
   exit 0
 fi
 
@@ -29,7 +30,7 @@ else
 fi
 
 if [[ -z "$state_file" ]]; then
-  echo "No State file found under kis/state/. Recover context with /kis:start."
+  echo "No State file found under kis/state/. Recover context with the start command."
   exit 0
 fi
 

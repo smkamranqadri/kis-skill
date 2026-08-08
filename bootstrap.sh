@@ -23,7 +23,7 @@ Options:
   --force               Replace an existing install during install.
   --no-claude-link      Do not create .claude/skills/kis compatibility symlink.
   --commands-host <n>   Command adapters: project (default: claude and pi), claude, pi,
-                        codex, or all. Only codex writes outside the project.
+                        opencode, codex, or all. Only codex writes outside the project.
   --no-commands         Do not install or refresh command adapters.
   --no-anchor           Do not install or refresh the re-anchor hook and instruction block.
   -h, --help            Show this help.
@@ -97,7 +97,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --commands-host)
-      [[ $# -ge 2 ]] || die "--commands-host requires project, claude, pi, codex, or all"
+      [[ $# -ge 2 ]] || die "--commands-host requires project, claude, pi, opencode, codex, or all"
       commands_host="$2"
       shift 2
       ;;
@@ -134,6 +134,15 @@ if [[ -z "$install_dir" ]]; then
   install_dir="$target_root/.agents/skills/kis"
 fi
 
+install_args() {
+  local args=(--source "$source_arg" --target "$target_root" --commands-host "$commands_host")
+  [[ "$force" == "true" ]] && args+=(--force)
+  [[ "$create_claude_link" == "false" ]] && args+=(--no-claude-link)
+  [[ "$install_commands" == "false" ]] && args+=(--no-commands)
+  [[ "$install_anchor" == "false" ]] && args+=(--no-anchor)
+  printf '%s\n' "${args[@]}"
+}
+
 refresh_adapters() {
   if [[ "$install_commands" == "true" && -x "$install_dir/scripts/install-commands.sh" ]]; then
     "$install_dir/scripts/install-commands.sh" \
@@ -147,13 +156,23 @@ refresh_adapters() {
   fi
 }
 
+reinstall_over_install() {
+  [[ "$install_dir" == "$target_root/.agents/skills/kis" ]] || \
+    die "cannot reinstall over a custom --install-dir; run install-skill.sh --force yourself"
+
+  local args=()
+  while IFS= read -r arg; do
+    args+=("$arg")
+  done < <(force="true" install_args)
+  "$source_arg/scripts/install-skill.sh" "${args[@]}"
+}
+
 case "$command_name" in
   install)
-    args=(--source "$source_arg" --target "$target_root" --commands-host "$commands_host")
-    [[ "$force" == "true" ]] && args+=(--force)
-    [[ "$create_claude_link" == "false" ]] && args+=(--no-claude-link)
-    [[ "$install_commands" == "false" ]] && args+=(--no-commands)
-    [[ "$install_anchor" == "false" ]] && args+=(--no-anchor)
+    args=()
+    while IFS= read -r arg; do
+      args+=("$arg")
+    done < <(install_args)
     "$source_arg/scripts/install-skill.sh" "${args[@]}"
     ;;
   check)
@@ -163,10 +182,17 @@ case "$command_name" in
       --check
     ;;
   update)
-    "$install_dir/scripts/update-installed-skill.sh" \
-      --source "$source_arg" \
-      --install-dir "$install_dir" \
-      --apply
-    refresh_adapters
+    updater="$install_dir/scripts/update-installed-skill.sh"
+    # An install predating the source-only layout ships an updater that rejects this
+    # source, so it can never update itself. Reinstalling is the only way forward.
+    if [[ ! -x "$updater" ]]; then
+      echo "No updater in $install_dir. Reinstalling instead."
+      reinstall_over_install
+    elif "$updater" --source "$source_arg" --install-dir "$install_dir" --apply; then
+      refresh_adapters
+    else
+      echo "The installed updater could not apply this source. Reinstalling instead."
+      reinstall_over_install
+    fi
     ;;
 esac

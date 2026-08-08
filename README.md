@@ -1,6 +1,6 @@
 # KIS Skill
 
-KIS is an Agent Skill for project memory and execution discipline. It works in Claude, Pi, and Codex.
+KIS is an Agent Skill for project memory and execution discipline. It works in Claude, Pi, OpenCode, Codex, and Antigravity.
 
 - **Knowledge**: stable facts, architecture, constraints, rules, durable decisions
 - **Intent**: goals, PRDs, plans, acceptance criteria, approved direction
@@ -20,7 +20,8 @@ curl -fsSL https://raw.githubusercontent.com/smkamranqadri/kis-skill/main/bootst
 That gives the project:
 
 ```text
-.agents/skills/kis/        the skill package, discovered by Pi and Codex
+.agents/skills/kis/        the skill package, discovered by Pi, OpenCode, Codex, and Antigravity
+.agents/hooks.json         Antigravity hook that re-injects current State once per conversation
 .claude/skills/kis         link for Claude
 .claude/commands/kis       link for Claude commands
 .pi/prompts/kis-*.md       links for Pi prompts
@@ -28,13 +29,14 @@ That gives the project:
 AGENTS.md                  KIS block between <!-- kis:anchor:start|end --> markers
 ```
 
-Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.9.0` to pin a version.
+Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.10.0` to pin a version.
 
 This repository holds the source package under `skills/kis/`; nothing here is a live install. The installer copies it to `.agents/skills/kis` in your project, which is where every host looks.
 
-Codex prompts are user-level and are not installed by default:
+OpenCode commands and Codex prompts are not installed by default. Codex writes to your home directory, and OpenCode already finds the skill without them:
 
 ```bash
+.agents/skills/kis/scripts/install-commands.sh --host opencode
 .agents/skills/kis/scripts/install-commands.sh --host codex
 ```
 
@@ -55,7 +57,7 @@ Ask for the skill, or run a command:
 Use kis. Recover this project and tell me the current task, blocker, proof, and next action.
 ```
 
-| Step | Claude | Pi | Codex |
+| Step | Claude | Pi and OpenCode | Codex |
 | --- | --- | --- | --- |
 | Recover context | `/kis:start` | `/kis-start` | `/prompts:kis-start` |
 | Interview and scope | `/kis:plan` | `/kis-plan` | `/prompts:kis-plan` |
@@ -64,11 +66,15 @@ Use kis. Recover this project and tell me the current task, blocker, proof, and 
 | Audit memory | `/kis:check` | `/kis-check` | `/prompts:kis-check` |
 | Bootstrap `kis/` | `/kis:init` | `/kis-init` | `/prompts:kis-init` |
 
+Antigravity supports rules, skills, plugins, hooks, and MCP, but not custom slash commands. Ask for the skill and name the step, or point it at `.agents/skills/kis/commands/sync.md` directly.
+
+In Claude you get two entries with the same name, and both are meant to be there. `/kis` is the skill: the whole loop, and what Claude reaches for on its own. `/kis:start` and its siblings are the per-step commands.
+
 Memory lives in the consuming project under `kis/knowledge/`, `kis/intent/`, and `kis/state/`.
 
 ## Anti-Drift
 
-Commands only help when you remember to type one. The re-anchor layer covers the rest: a Claude `SessionStart` hook that prints current State into context on startup, resume, clear, and compact, and a marked KIS block in `AGENTS.md` and `CLAUDE.md` for Pi and Codex, which have no hook equivalent.
+Commands only help when you remember to type one. The re-anchor layer covers the rest: a Claude `SessionStart` hook that prints current State into context on startup, resume, clear, and compact, an Antigravity `PreInvocation` hook that injects the same text once per conversation, and a marked KIS block in `AGENTS.md` and `CLAUDE.md` for Pi, OpenCode, and Codex, which have no hook equivalent.
 
 ```bash
 .agents/skills/kis/scripts/install-anchor.sh --check

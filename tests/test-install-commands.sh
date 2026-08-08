@@ -35,6 +35,15 @@ pi_link="$target_root/.pi/prompts/kis-start.md"
 [[ -f "$pi_link" ]] || fail "Pi prompt link is broken"
 [[ -L "$target_root/.pi/prompts/kis-sync.md" ]] || fail "Pi prompt link was not created for every command"
 
+opencode_link="$target_root/.opencode/command/kis-start.md"
+[[ ! -e "$opencode_link" ]] || fail "the default host should not install OpenCode commands"
+
+"$script_under_test" --target "$target_root" --host opencode >/dev/null
+[[ -L "$opencode_link" ]] || fail "OpenCode command link was not created"
+[[ "$(readlink "$opencode_link")" == "../../.agents/skills/kis/commands/start.md" ]] || fail "OpenCode command link is not relative to the project"
+[[ -f "$opencode_link" ]] || fail "OpenCode command link is broken"
+[[ -L "$target_root/.opencode/command/kis-sync.md" ]] || fail "OpenCode command link was not created for every command"
+
 codex_output="$("$script_under_test" --target "$target_root" --host codex --codex-prompts-dir "$codex_dir")"
 [[ -f "$codex_dir/kis-start.md" ]] || fail "Codex prompt was not installed"
 [[ -f "$codex_dir/kis-sync.md" ]] || fail "Codex prompt was not installed"
@@ -43,6 +52,7 @@ codex_output="$("$script_under_test" --target "$target_root" --host codex --code
 "$script_under_test" --target "$target_root" --host all --codex-prompts-dir "$codex_dir" --remove >/dev/null
 [[ ! -e "$link" ]] || fail "--remove left the Claude command link"
 [[ ! -e "$pi_link" && ! -L "$pi_link" ]] || fail "--remove left Pi prompt links"
+[[ ! -e "$opencode_link" && ! -L "$opencode_link" ]] || fail "--remove left OpenCode command links"
 [[ ! -f "$codex_dir/kis-start.md" ]] || fail "--remove left Codex prompts"
 
 empty_skill="$tmp_dir/empty/.agents/skills/kis"

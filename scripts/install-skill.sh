@@ -5,7 +5,7 @@ usage() {
   cat <<'EOF'
 Usage:
   install-skill.sh --source <skill-dir-or-repo-root> [--target <project-root>] [--force] [--no-claude-link]
-                   [--commands-host project|claude|pi|codex|all]
+                   [--commands-host project|claude|pi|opencode|codex|all]
                    [--no-commands] [--no-anchor]
 
 Options:
@@ -15,7 +15,7 @@ Options:
   --force                    Replace an existing .agents/skills/kis install.
   --no-claude-link           Do not create .claude/skills/kis compatibility symlink.
   --commands-host <name>     Command adapters: project (default: claude and pi), claude, pi,
-                             codex, or all. Only codex writes outside the project.
+                             opencode, codex, or all. Only codex writes outside the project.
   --no-commands              Do not install command adapters.
   --no-anchor                Do not install the re-anchor hook and instruction block.
   -h, --help                 Show this help.
@@ -56,7 +56,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --commands-host)
-      [[ $# -ge 2 ]] || die "--commands-host requires project, claude, pi, codex, or all"
+      [[ $# -ge 2 ]] || die "--commands-host requires project, claude, pi, opencode, codex, or all"
       commands_host="$2"
       shift 2
       ;;

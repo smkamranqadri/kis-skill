@@ -2,13 +2,16 @@
 set -euo pipefail
 
 script_under_test="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../skills/kis/scripts" && pwd)/install-anchor.sh}"
-hook_script="$(cd "$(dirname "${BASH_SOURCE[0]}")/../skills/kis" && pwd)/hooks/session-anchor.sh"
+package_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../skills/kis" && pwd)"
+hook_script="$package_dir/hooks/session-anchor.sh"
+antigravity_hook_script="$package_dir/hooks/antigravity-anchor.sh"
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
 target_root="$tmp_dir/project"
 settings="$target_root/.claude/settings.json"
+hooks_json="$target_root/.agents/hooks.json"
 agents_file="$target_root/AGENTS.md"
 
 mkdir -p "$target_root/.claude"
@@ -22,6 +25,19 @@ cat > "$settings" <<'EOF'
       {
         "matcher": "startup",
         "hooks": [{ "type": "command", "command": "echo existing" }]
+      }
+    ]
+  }
+}
+EOF
+mkdir -p "$target_root/.agents"
+cat > "$hooks_json" <<'EOF'
+{
+  "existing-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [{ "type": "command", "command": "echo guard" }]
       }
     ]
   }
@@ -50,6 +66,10 @@ grep -q 'echo existing' "$settings" || fail "existing hook was lost"
 grep -q 'Existing instructions.' "$agents_file" || fail "existing instructions were lost"
 grep -q '<!-- kis:anchor:start -->' "$agents_file" || fail "KIS block was not added"
 grep -q '/kis:start' "$agents_file" || fail "KIS block is missing the command list"
+grep -q '"kis-anchor"' "$hooks_json" || fail "Antigravity hook was not registered"
+grep -q './skills/kis/hooks/antigravity-anchor.sh' "$hooks_json" || fail "Antigravity hook command is not relative to .agents/"
+grep -q '"PreInvocation"' "$hooks_json" || fail "Antigravity hook is not on PreInvocation"
+grep -q 'echo guard' "$hooks_json" || fail "an unrelated Antigravity hook was lost"
 
 "$script_under_test" --target "$target_root" >/dev/null
 [[ "$(count_kis_hooks)" == "1" ]] || fail "re-running duplicated the anchor hook"
@@ -57,10 +77,13 @@ grep -q '/kis:start' "$agents_file" || fail "KIS block is missing the command li
 
 check_output="$("$script_under_test" --target "$target_root" --check)"
 [[ "$check_output" == *"installed"* ]] || fail "--check did not report the hook"
+[[ "$check_output" == *"Antigravity PreInvocation hook: installed"* ]] || fail "--check did not report the Antigravity hook"
 [[ "$check_output" == *"KIS block present"* ]] || fail "--check did not report the block"
 
 "$script_under_test" --target "$target_root" --remove >/dev/null
 [[ "$(count_kis_hooks)" == "0" ]] || fail "--remove left the anchor hook"
+grep -q 'kis-anchor' "$hooks_json" && fail "--remove left the Antigravity hook"
+grep -q 'echo guard' "$hooks_json" || fail "--remove deleted an unrelated Antigravity hook"
 grep -q 'echo existing' "$settings" || fail "--remove deleted an unrelated hook"
 grep -q '<!-- kis:anchor:start -->' "$agents_file" && fail "--remove left the KIS block"
 grep -q 'Existing instructions.' "$agents_file" || fail "--remove deleted unrelated instructions"
@@ -79,5 +102,21 @@ anchor_output="$("$hook_script" "$kis_root")"
 
 empty_output="$("$hook_script" "$tmp_dir/no-kis")"
 [[ "$empty_output" == *"not initialized"* ]] || fail "hook did not handle a project without kis/"
+
+marker_home="$tmp_dir/hook-markers"
+mkdir -p "$marker_home"
+antigravity_payload="{\"conversationId\":\"conv-1\",\"workspacePaths\":[\"$kis_root\"]}"
+antigravity_output="$(printf '%s' "$antigravity_payload" | TMPDIR="$marker_home" "$antigravity_hook_script")"
+[[ "$antigravity_output" == *'"injectSteps"'* ]] || fail "Antigravity hook did not inject a step"
+[[ "$antigravity_output" == *"Task: wire commands"* ]] || fail "Antigravity hook did not inject State"
+
+repeat_output="$(printf '%s' "$antigravity_payload" | TMPDIR="$marker_home" "$antigravity_hook_script")"
+[[ "$repeat_output" == "{}" ]] || fail "Antigravity hook injected twice in one conversation"
+
+second_output="$(printf '{"conversationId":"conv-2","workspacePaths":["%s"]}' "$kis_root" | TMPDIR="$marker_home" "$antigravity_hook_script")"
+[[ "$second_output" == *'"injectSteps"'* ]] || fail "Antigravity hook did not inject for a new conversation"
+
+garbage_output="$(printf 'not json' | TMPDIR="$marker_home" "$antigravity_hook_script")"
+[[ "$garbage_output" == *'"injectSteps"'* || "$garbage_output" == "{}" ]] || fail "Antigravity hook did not emit JSON for an unparsable payload"
 
 echo "install-anchor tests: pass"
