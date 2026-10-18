@@ -21,7 +21,9 @@ That gives the project:
 
 ```text
 .agents/skills/kis/        the skill package, discovered by Pi, OpenCode, Codex, and Antigravity
-.agents/hooks.json         Antigravity hook that re-injects current State once per conversation
+.agents/hooks.json         Antigravity hook that injects current State at the start of every turn
+.codex/hooks.json          Codex SessionStart hook (trust it once with /hooks)
+.commandcode/settings.json Command Code SessionStart hook
 .claude/skills/kis         link for Claude
 .claude/commands/kis       link for Claude commands
 .pi/prompts/kis-*.md       links for Pi prompts
@@ -29,7 +31,7 @@ That gives the project:
 AGENTS.md                  KIS block between <!-- kis:anchor:start|end --> markers
 ```
 
-Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.10.0` to pin a version.
+Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.11.0` to pin a version.
 
 This repository holds the source package under `skills/kis/`; nothing here is a live install. The installer copies it to `.agents/skills/kis` in your project, which is where every host looks.
 
@@ -74,7 +76,9 @@ Memory lives in the consuming project under `kis/knowledge/`, `kis/intent/`, and
 
 ## Anti-Drift
 
-Commands only help when you remember to type one. The re-anchor layer covers the rest: a Claude `SessionStart` hook that prints current State into context on startup, resume, clear, and compact, an Antigravity `PreInvocation` hook that injects the same text once per conversation, and a marked KIS block in `AGENTS.md` and `CLAUDE.md` for Pi, OpenCode, and Codex, which have no hook equivalent.
+Commands only help when you remember to type one. The re-anchor layer covers the rest: a Claude `SessionStart` hook that prints current State into context on startup, resume, clear, and compact, an Antigravity `PreInvocation` hook that injects the same text at the first model call of every turn, a Codex `SessionStart` hook in `.codex/hooks.json`, a Command Code `SessionStart` hook in `.commandcode/settings.json`, and a marked KIS block in `AGENTS.md` and `CLAUDE.md` for Pi and OpenCode, which have no hook equivalent.
+
+Codex skips a new hook until you review it: after installing, open Codex in the project and run `/hooks` once to trust the KIS hook (project hooks also need the project's `.codex/` layer trusted). Command Code needs no such step. Limits: Command Code cannot signal a compaction, so a compaction is not re-anchored there (it re-anchors on startup, resume, and clear). Command Code print mode (`cmd -p`) runs no SessionStart hooks, and a prompt passed at launch is answered before the hook context lands, so the anchor reaches the model from the second turn. Antigravity re-anchors every turn, so a compaction is covered. Codex re-anchors on compact too.
 
 ```bash
 .agents/skills/kis/scripts/install-anchor.sh --check

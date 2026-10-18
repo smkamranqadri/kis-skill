@@ -36,6 +36,8 @@ tests/test-update-installed-skill.sh
 tests/test-install-commands.sh
 tests/test-install-anchor.sh
 tests/test-session-anchor.sh
+tests/test-state-stamp.sh
+tests/test-plan-review.sh
 ```
 
 The validator uses the official `skills-ref` path when `uv` is installed and falls back to Ruby structural validation otherwise. It requires the package directory to be named `kis`.
