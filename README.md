@@ -31,15 +31,14 @@ That gives the project:
 AGENTS.md                  KIS block between <!-- kis:anchor:start|end --> markers
 ```
 
-Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.12.0` to pin a version.
+Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.12.1` to pin a version.
 
 This repository holds the source package under `skills/kis/`; nothing here is a live install. The installer copies it to `.agents/skills/kis` in your project, which is where every host looks.
 
-OpenCode commands and Codex prompts are not installed by default. Codex writes to your home directory, and OpenCode already finds the skill without them:
+By default the installer adds Claude and Pi commands, plus Codex prompts when your Codex home (`${CODEX_HOME:-~/.codex}`) already exists, so an update refreshes them too. Codex prompts are the one adapter written outside the project, which is why a machine without Codex is skipped; `--commands-host project` never writes there, and `--host codex` installs them even without a Codex home. OpenCode already finds the skill without commands, so its commands are opt-in:
 
 ```bash
 .agents/skills/kis/scripts/install-commands.sh --host opencode
-.agents/skills/kis/scripts/install-commands.sh --host codex
 ```
 
 ## Update

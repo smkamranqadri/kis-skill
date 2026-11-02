@@ -6,6 +6,8 @@ pkg="${1:-$repo_root/skills/kis}"
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
+# The installers write Codex prompts under CODEX_HOME when it exists; point it at nothing so a test never touches the real one.
+export CODEX_HOME="$tmp_dir/no-codex"
 
 fail() {
   echo "$*" >&2

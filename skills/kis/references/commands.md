@@ -20,7 +20,7 @@ Keep each command pointed at one step. A command that restates the whole skill b
 
 ## Host Adapters
 
-Install with `scripts/install-commands.sh --host project|claude|pi|opencode|codex|all`. The default is `project`, which covers Claude and Pi and writes nothing outside the project.
+Install with `scripts/install-commands.sh --host auto|project|claude|pi|opencode|codex|all`. The default is `auto`: Claude and Pi, plus Codex when the Codex home directory (`${CODEX_HOME:-~/.codex}`, or the parent of `--codex-prompts-dir`) already exists, so a machine without Codex is never written to. `project` covers Claude and Pi only and writes nothing outside the project. `codex` installs even when the directory is missing.
 
 | Host | Adapter | Invocation |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ Install with `scripts/install-commands.sh --host project|claude|pi|opencode|code
 | Codex | `${CODEX_HOME:-~/.codex}/prompts/kis-*.md` copies | `/prompts:kis-start` |
 | Antigravity | none: it supports rules, skills, plugins, hooks, and MCP, but not custom slash commands | name the step, or point it at the command file |
 
-Claude, Pi, and OpenCode links follow package updates. Codex prompts are user-level, cannot be shared through a repository, and are copies, so re-run the installer after an update. OpenAI marks Codex custom prompts deprecated in favor of skills, so treat them as a convenience layer over the skill.
+Claude, Pi, and OpenCode links follow package updates. Codex prompts are user-level, cannot be shared through a repository, and are copies; an update run with the default host refreshes them when Codex is present, otherwise re-run the installer. OpenAI marks Codex custom prompts deprecated in favor of skills, so treat them as a convenience layer over the skill.
 
 Pi, OpenCode, and Antigravity discover the skill itself from `.agents/skills/`, so no adapter is needed to reach it. Claude does not, which is why the installer also links `.claude/skills/kis`. On any host, the command files are also plain instructions: an agent can be told to follow `.agents/skills/kis/commands/sync.md` directly.
 

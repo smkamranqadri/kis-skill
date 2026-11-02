@@ -5,6 +5,8 @@ script_under_test="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../skills/kis/scrip
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
+# The installers write Codex prompts under CODEX_HOME when it exists; point it at nothing so a test never touches the real one.
+export CODEX_HOME="$tmp_dir/no-codex"
 
 source_dir="$tmp_dir/source/kis"
 install_dir="$tmp_dir/project/.agents/skills/kis"

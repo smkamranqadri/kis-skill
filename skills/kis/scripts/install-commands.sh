@@ -5,14 +5,15 @@ usage() {
   cat <<'EOF'
 Usage:
   install-commands.sh [--target <project-root>] [--skill-dir <path>]
-                      [--host project|claude|pi|opencode|codex|all]
+                      [--host auto|project|claude|pi|opencode|codex|all]
                       [--codex-prompts-dir <path>] [--remove]
 
 Options:
   --target <path>             Project root. Defaults to current directory.
   --skill-dir <path>          Installed skill package. Defaults to <target>/.agents/skills/kis.
-  --host <name>               project (default: claude and pi), claude, pi, opencode, codex,
-                              or all. Only codex writes outside the project.
+  --host <name>               auto (default: claude and pi, plus codex when the Codex home
+                              directory exists), project (claude and pi only), claude, pi,
+                              opencode, codex, or all. Only codex writes outside the project.
                               Antigravity has no custom slash commands and needs no adapter.
   --codex-prompts-dir <path>  Codex prompts directory. Defaults to ${CODEX_HOME:-~/.codex}/prompts.
                               Codex prompts are user-level and are not shared through the repository.
@@ -28,7 +29,7 @@ die() {
 
 target_root="."
 skill_dir=""
-host="project"
+host="auto"
 codex_prompts_dir="${CODEX_HOME:-$HOME/.codex}/prompts"
 remove="false"
 
@@ -45,7 +46,7 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --host)
-      [[ $# -ge 2 ]] || die "--host requires project, claude, pi, opencode, codex, or all"
+      [[ $# -ge 2 ]] || die "--host requires auto, project, claude, pi, opencode, codex, or all"
       host="$2"
       shift 2
       ;;
@@ -69,7 +70,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$host" in
-  project|claude|pi|opencode|codex|all) ;;
+  auto|project|claude|pi|opencode|codex|all) ;;
   *) die "unknown host: $host" ;;
 esac
 
@@ -198,10 +199,10 @@ want_claude="false"
 want_pi="false"
 want_opencode="false"
 want_codex="false"
-if [[ "$host" == "claude" || "$host" == "project" || "$host" == "all" ]]; then
+if [[ "$host" == "claude" || "$host" == "auto" || "$host" == "project" || "$host" == "all" ]]; then
   want_claude="true"
 fi
-if [[ "$host" == "pi" || "$host" == "project" || "$host" == "all" ]]; then
+if [[ "$host" == "pi" || "$host" == "auto" || "$host" == "project" || "$host" == "all" ]]; then
   want_pi="true"
 fi
 if [[ "$host" == "opencode" || "$host" == "all" ]]; then
@@ -209,6 +210,13 @@ if [[ "$host" == "opencode" || "$host" == "all" ]]; then
 fi
 if [[ "$host" == "codex" || "$host" == "all" ]]; then
   want_codex="true"
+fi
+if [[ "$host" == "auto" ]]; then
+  if [[ -d "$(dirname "$codex_prompts_dir")" ]]; then
+    want_codex="true"
+  else
+    echo "Codex prompts: skipped ($(dirname "$codex_prompts_dir") not found; use --host codex to install anyway)"
+  fi
 fi
 
 if [[ "$remove" == "true" ]]; then
