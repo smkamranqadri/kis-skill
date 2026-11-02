@@ -95,7 +95,7 @@ install_claude() {
   rm -rf "$claude_link"
   ln -s "$link_target" "$claude_link"
   echo "Claude commands: $claude_link -> $link_target"
-  echo "Claude usage: /kis:start /kis:plan /kis:act /kis:sync /kis:check /kis:init"
+  echo "Claude usage: /kis:start /kis:plan /kis:compass /kis:act /kis:sync /kis:check /kis:init"
 }
 
 remove_claude() {
@@ -146,7 +146,7 @@ install_pi() {
   local installed
   installed="$(link_per_command_file "$pi_prompts_dir")"
   echo "Pi prompts: $installed link(s) in ${pi_prompts_dir#"$target_root/"}"
-  echo "Pi usage: /kis-start /kis-plan /kis-act /kis-sync /kis-check /kis-init"
+  echo "Pi usage: /kis-start /kis-plan /kis-compass /kis-act /kis-sync /kis-check /kis-init"
 }
 
 remove_pi() {
@@ -159,7 +159,7 @@ install_opencode() {
   local installed
   installed="$(link_per_command_file "$opencode_command_dir")"
   echo "OpenCode commands: $installed link(s) in ${opencode_command_dir#"$target_root/"}"
-  echo "OpenCode usage: /kis-start /kis-plan /kis-act /kis-sync /kis-check /kis-init"
+  echo "OpenCode usage: /kis-start /kis-plan /kis-compass /kis-act /kis-sync /kis-check /kis-init"
 }
 
 remove_opencode() {
@@ -180,7 +180,7 @@ install_codex() {
   done < <(find "$commands_dir" -maxdepth 1 -type f -name '*.md' | sort)
 
   echo "Codex prompts: $installed file(s) in $codex_prompts_dir"
-  echo "Codex usage: /prompts:kis-start /prompts:kis-plan /prompts:kis-act /prompts:kis-sync /prompts:kis-check /prompts:kis-init"
+  echo "Codex usage: /prompts:kis-start /prompts:kis-plan /prompts:kis-compass /prompts:kis-act /prompts:kis-sync /prompts:kis-check /prompts:kis-init"
   echo "Codex prompts are user-level and copied, not linked. Re-run after a skill update."
 }
 

@@ -31,7 +31,7 @@ That gives the project:
 AGENTS.md                  KIS block between <!-- kis:anchor:start|end --> markers
 ```
 
-Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.11.0` to pin a version.
+Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.12.0` to pin a version.
 
 This repository holds the source package under `skills/kis/`; nothing here is a live install. The installer copies it to `.agents/skills/kis` in your project, which is where every host looks.
 
@@ -63,10 +63,13 @@ Use kis. Recover this project and tell me the current task, blocker, proof, and 
 | --- | --- | --- | --- |
 | Recover context | `/kis:start` | `/kis-start` | `/prompts:kis-start` |
 | Interview and scope | `/kis:plan` | `/kis-plan` | `/prompts:kis-plan` |
+| Define product direction | `/kis:compass` | `/kis-compass` | `/prompts:kis-compass` |
 | Execute with proof | `/kis:act` | `/kis-act` | `/prompts:kis-act` |
 | Write back to memory | `/kis:sync` | `/kis-sync` | `/prompts:kis-sync` |
 | Audit memory | `/kis:check` | `/kis-check` | `/prompts:kis-check` |
 | Bootstrap `kis/` | `/kis:init` | `/kis-init` | `/prompts:kis-init` |
+
+`/kis:compass` is for product direction: it interviews you one question at a time (why the product exists, who it serves, vision, boundaries, what a POC tests versus what an MVP commits to), proposes a Product Compass, and writes `kis/intent/compass.md` only after you confirm. `/kis:plan` reads that compass when a task touches direction or scope. The compass keeps direction steady while features and experiments change; it does not replace the PRD, the plan, or State.
 
 Antigravity supports rules, skills, plugins, hooks, and MCP, but not custom slash commands. Ask for the skill and name the step, or point it at `.agents/skills/kis/commands/sync.md` directly.
 
