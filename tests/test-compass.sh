@@ -102,6 +102,16 @@ contains "$plan_md" 'read it and `.agents/skills/kis/references/product-compass.
 contains "$plan_md" 'Do not override the compass or edit it here; a change of direction goes through the compass command.' || fail "plan.md lost the do-not-override rule"
 contains "$plan_md" 'place work as POC or MVP' || fail "plan.md does not place work as POC or MVP"
 
+# Docs: the README, the bootstrap file map and the command reference all say where the compass lives and who reads it.
+if [[ "$pkg" == "$repo_root/skills/kis" ]]; then
+  contains "$repo_root/README.md" 'and the Product Compass (`kis/intent/compass.md`' || fail "README does not define the compass in the Intent layer"
+  contains "$repo_root/README.md" '| Define product direction | `/kis:compass` | `/kis-compass` | `/prompts:kis-compass` |' || fail "README command table lacks the compass row"
+  contains "$repo_root/README.md" '`/kis:plan` reads that compass when a task touches direction or scope.' || fail "README does not say plan reads the compass"
+fi
+contains "$pkg/references/bootstrap.md" '    compass.md' || fail "bootstrap.md suggested files omit compass.md"
+contains "$pkg/references/bootstrap.md" 'Product direction   -> intent/compass.md' || fail "bootstrap.md document mapping omits product direction"
+contains "$pkg/references/commands.md" 'Reads `kis/intent/compass.md` when the task touches product direction.' || fail "references/commands.md does not say plan reads the compass"
+
 # The reference doc lists the command.
 contains "$pkg/references/commands.md" '| `compass.md` |' || fail "references/commands.md does not list compass.md"
 

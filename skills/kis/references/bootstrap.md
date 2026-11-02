@@ -68,6 +68,7 @@ kis/
     rules.md
   intent/
     PRD.md
+    compass.md
     ImplementationPlan.md
   state/
     current.md
@@ -81,6 +82,7 @@ For medium or large projects:
 
 ```text
 PRD                 -> intent/
+Product direction   -> intent/compass.md (written by the compass command; see product-compass.md)
 Tech spec           -> knowledge/
 App flow            -> intent/
 Design direction    -> intent/
