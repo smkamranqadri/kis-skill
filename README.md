@@ -3,7 +3,7 @@
 KIS is an Agent Skill for project memory and execution discipline. It works in Claude, Pi, OpenCode, Codex, and Antigravity.
 
 - **Knowledge**: stable facts, architecture, constraints, rules, durable decisions
-- **Intent**: goals, PRDs, plans, acceptance criteria, approved direction
+- **Intent**: goals, PRDs, plans, acceptance criteria, approved direction, and the Product Compass (`kis/intent/compass.md`: why the product exists, who it serves, vision, boundaries, POC versus MVP)
 - **State**: branch, current task, blocker, commands, proof, next action
 
 The skill makes an agent recover context before acting, interview you before non-trivial work, verify with proof before calling anything done, and keep project memory synchronized.
