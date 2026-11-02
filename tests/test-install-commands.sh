@@ -5,6 +5,8 @@ script_under_test="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../skills/kis/scrip
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
+# The installers write Codex prompts under CODEX_HOME when it exists; point it at nothing so a test never touches the real one.
+export CODEX_HOME="$tmp_dir/no-codex"
 
 target_root="$tmp_dir/project"
 skill_dir="$target_root/.agents/skills/kis"
@@ -59,6 +61,28 @@ codex_output="$("$script_under_test" --target "$target_root" --host codex --code
 [[ ! -e "$pi_link" && ! -L "$pi_link" ]] || fail "--remove left Pi prompt links"
 [[ ! -e "$opencode_link" && ! -L "$opencode_link" ]] || fail "--remove left OpenCode command links"
 [[ ! -f "$codex_dir/kis-start.md" ]] || fail "--remove left Codex prompts"
+
+# auto (the default) adds Codex only where the Codex home directory exists; project never does.
+auto_home="$tmp_dir/auto-codex-home"
+mkdir -p "$auto_home"
+auto_output="$(CODEX_HOME="$auto_home" "$script_under_test" --target "$target_root")"
+[[ -f "$auto_home/prompts/kis-start.md" && -f "$auto_home/prompts/kis-compass.md" ]] || fail "auto did not install Codex prompts into an existing Codex home"
+[[ "$auto_output" == *"Codex prompts: 3 file(s)"* ]] || fail "auto did not report the Codex install: $auto_output"
+CODEX_HOME="$auto_home" "$script_under_test" --target "$target_root" --remove >/dev/null
+[[ ! -e "$auto_home/prompts/kis-start.md" && ! -e "$auto_home/prompts/kis-compass.md" ]] || fail "auto --remove left Codex prompts"
+[[ ! -e "$link" ]] || fail "auto --remove left the Claude command link"
+
+CODEX_HOME="$auto_home" "$script_under_test" --target "$target_root" --host project >/dev/null
+[[ -z "$(find "$auto_home" -name 'kis-*.md' 2>/dev/null)" ]] || fail "--host project wrote Codex prompts"
+
+missing_home="$tmp_dir/no-such-codex-home"
+missing_output="$(CODEX_HOME="$missing_home" "$script_under_test" --target "$target_root")"
+[[ ! -e "$missing_home" ]] || fail "auto created a Codex home that did not exist"
+[[ "$missing_output" == *"Codex prompts: skipped ($missing_home not found; use --host codex to install anyway)"* ]] || fail "auto did not say why Codex was skipped: $missing_output"
+[[ -L "$target_root/.pi/prompts/kis-start.md" ]] || fail "auto skipped the project hosts when Codex was missing"
+
+CODEX_HOME="$missing_home" "$script_under_test" --target "$target_root" --host codex >/dev/null
+[[ -f "$missing_home/prompts/kis-start.md" ]] || fail "--host codex did not install into a missing Codex home"
 
 empty_skill="$tmp_dir/empty/.agents/skills/kis"
 mkdir -p "$empty_skill"

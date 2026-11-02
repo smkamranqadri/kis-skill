@@ -5,7 +5,7 @@ usage() {
   cat <<'EOF'
 Usage:
   install-skill.sh --source <skill-dir-or-repo-root> [--target <project-root>] [--force] [--no-claude-link]
-                   [--commands-host project|claude|pi|opencode|codex|all]
+                   [--commands-host auto|project|claude|pi|opencode|codex|all]
                    [--no-commands] [--no-anchor]
 
 Options:
@@ -14,8 +14,9 @@ Options:
   --target <path>            Project root to install into. Defaults to current directory.
   --force                    Replace an existing .agents/skills/kis install.
   --no-claude-link           Do not create .claude/skills/kis compatibility symlink.
-  --commands-host <name>     Command adapters: project (default: claude and pi), claude, pi,
-                             opencode, codex, or all. Only codex writes outside the project.
+  --commands-host <name>     Command adapters: auto (default: claude and pi, plus codex when the
+                             Codex home directory exists), project (claude and pi only), claude,
+                             pi, opencode, codex, or all. Only codex writes outside the project.
   --no-commands              Do not install command adapters.
   --no-anchor                Do not install the re-anchor hook and instruction block.
   -h, --help                 Show this help.
@@ -32,7 +33,7 @@ target_root="."
 force="false"
 create_claude_link="true"
 install_commands="true"
-commands_host="project"
+commands_host="auto"
 install_anchor="true"
 
 while [[ $# -gt 0 ]]; do
@@ -56,7 +57,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --commands-host)
-      [[ $# -ge 2 ]] || die "--commands-host requires project, claude, pi, opencode, codex, or all"
+      [[ $# -ge 2 ]] || die "--commands-host requires auto, project, claude, pi, opencode, codex, or all"
       commands_host="$2"
       shift 2
       ;;
