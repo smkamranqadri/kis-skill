@@ -13,6 +13,7 @@ codex_dir="$tmp_dir/codex-prompts"
 mkdir -p "$skill_dir/commands"
 printf -- '---\ndescription: test\n---\n\n# Start\n' > "$skill_dir/commands/start.md"
 printf -- '---\ndescription: test\n---\n\n# Sync\n' > "$skill_dir/commands/sync.md"
+printf -- '---\ndescription: test\n---\n\n# Compass\n' > "$skill_dir/commands/compass.md"
 
 fail() {
   echo "$*" >&2
@@ -25,6 +26,7 @@ link="$target_root/.claude/commands/kis"
 [[ -L "$link" ]] || fail "Claude command link was not created"
 [[ "$(readlink "$link")" == "../../.agents/skills/kis/commands" ]] || fail "Claude command link is not relative to the project"
 [[ -f "$link/start.md" ]] || fail "Claude command link is broken"
+[[ -f "$link/compass.md" ]] || fail "Claude command link does not reach compass"
 
 "$script_under_test" --target "$target_root" >/dev/null
 [[ -f "$link/start.md" ]] || fail "re-running install broke the Claude command link"
@@ -34,6 +36,7 @@ pi_link="$target_root/.pi/prompts/kis-start.md"
 [[ "$(readlink "$pi_link")" == "../../.agents/skills/kis/commands/start.md" ]] || fail "Pi prompt link is not relative to the project"
 [[ -f "$pi_link" ]] || fail "Pi prompt link is broken"
 [[ -L "$target_root/.pi/prompts/kis-sync.md" ]] || fail "Pi prompt link was not created for every command"
+[[ -f "$target_root/.pi/prompts/kis-compass.md" ]] || fail "Pi prompt link was not created for compass"
 
 opencode_link="$target_root/.opencode/command/kis-start.md"
 [[ ! -e "$opencode_link" ]] || fail "the default host should not install OpenCode commands"
@@ -43,11 +46,13 @@ opencode_link="$target_root/.opencode/command/kis-start.md"
 [[ "$(readlink "$opencode_link")" == "../../.agents/skills/kis/commands/start.md" ]] || fail "OpenCode command link is not relative to the project"
 [[ -f "$opencode_link" ]] || fail "OpenCode command link is broken"
 [[ -L "$target_root/.opencode/command/kis-sync.md" ]] || fail "OpenCode command link was not created for every command"
+[[ -f "$target_root/.opencode/command/kis-compass.md" ]] || fail "OpenCode command link was not created for compass"
 
 codex_output="$("$script_under_test" --target "$target_root" --host codex --codex-prompts-dir "$codex_dir")"
 [[ -f "$codex_dir/kis-start.md" ]] || fail "Codex prompt was not installed"
 [[ -f "$codex_dir/kis-sync.md" ]] || fail "Codex prompt was not installed"
-[[ "$codex_output" == *"2 file(s)"* ]] || fail "Codex install did not report installed count"
+[[ -f "$codex_dir/kis-compass.md" ]] || fail "Codex prompt was not installed for compass"
+[[ "$codex_output" == *"3 file(s)"* ]] || fail "Codex install did not report installed count"
 
 "$script_under_test" --target "$target_root" --host all --codex-prompts-dir "$codex_dir" --remove >/dev/null
 [[ ! -e "$link" ]] || fail "--remove left the Claude command link"

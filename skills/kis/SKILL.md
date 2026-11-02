@@ -1,8 +1,8 @@
 ---
 name: kis
-description: Operate KIS project memory under `kis/`, where Knowledge holds stable facts, Intent holds goals and plans, and State holds the current task, blocker, proof, and next action. Use when the repository has a `kis/` directory, when starting or resuming multi-step work or asking where it left off and what is next, when a decision, plan, blocker, proof, or status needs recording, when choosing how much process a task needs, when project memory has gone stale or contradictory, or when a project needs memory set up from scratch. Skip for trivial one-off work and questions the code already answers.
+description: Operate KIS project memory under `kis/`, where Knowledge holds stable facts, Intent holds goals and plans, and State holds the current task, blocker, proof, and next action. Use when the repository has a `kis/` directory, when starting or resuming multi-step work or asking where it left off and what is next, when a decision, plan, blocker, proof, or status needs recording, when the work is product direction (why the product exists, who it serves, vision, boundaries, or what a POC should test versus what an MVP commits to), when choosing how much process a task needs, when project memory has gone stale or contradictory, or when a project needs memory set up from scratch. Skip for trivial one-off work and questions the code already answers.
 metadata:
-  version: "0.11.0"
+  version: "0.12.0"
 ---
 
 # KIS
@@ -121,6 +121,10 @@ Proof:
 
 If verification fails, record it in State as the current blocker instead of marking the task done.
 
+## Product Direction
+
+Direction work (why the product exists, who it serves, its vision, where to focus, what not to build, and POC versus MVP) is recorded as a Product Compass at `kis/intent/compass.md`. Read [product-compass.md](references/product-compass.md) before writing or revising it, and before planning work that touches direction. The compass informs the PRD and plan and replaces neither, and operational status stays in State.
+
 ## Commands
 
-Each file in `commands/` is an explicit entry point into one step of this loop: `start` (LOAD), `plan`, `act`, `sync`, `check` (maintenance), and `init` (bootstrap). A command re-enters the loop; it is not a second workflow. For host adapters and the re-anchor layer, read [commands.md](references/commands.md).
+Each file in `commands/` is an explicit entry point into one step of this loop: `start` (LOAD), `plan`, `compass` (product direction, then Intent), `act`, `sync`, `check` (maintenance), and `init` (bootstrap). A command re-enters the loop; it is not a second workflow. For host adapters and the re-anchor layer, read [commands.md](references/commands.md).

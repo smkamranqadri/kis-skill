@@ -11,6 +11,7 @@ Commands are explicit entry points into the KIS loop. The re-anchor layer keeps 
 | `start.md` | LOAD: recover context, report current reality, propose a work mode. |
 | `init.md` | Bootstrap `kis/` for a project that has none. |
 | `plan.md` | QUESTION, CHALLENGE, STRUCTURE, PLAN: interview, then produce an approved scope. |
+| `compass.md` | QUESTION, CHALLENGE, STRUCTURE for product direction: interview, then write `kis/intent/compass.md` after confirmation (`product-compass.md` owns the rules). |
 | `act.md` | ACT: execute the current task with proof. |
 | `sync.md` | SYNCHRONIZE: write what changed into the right layer. |
 | `check.md` | Maintenance: audit for contradictions, staleness, and bloat. |

@@ -438,7 +438,7 @@ apply_instructions() {
         - Prove work with real command or verification output before marking anything done.
         - Synchronize the KIS layers that changed when work finishes.
         - Full instructions: `.agents/skills/kis/SKILL.md`.
-        - Commands live in `.agents/skills/kis/commands/`: start, plan, act, sync, check, init.
+        - Commands live in `.agents/skills/kis/commands/`: start, plan, compass, act, sync, check, init.
           Claude `/kis:start`, Pi and OpenCode `/kis-start`, Codex `/prompts:kis-start`.
           Antigravity has no custom slash commands: name the step and follow its command file.
         #{end_marker}
