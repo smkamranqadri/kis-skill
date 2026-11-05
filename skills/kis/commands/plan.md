@@ -11,9 +11,9 @@ Full instructions: `.agents/skills/kis/SKILL.md`. Specialist routing: `.agents/s
 
 ## Steps
 
-1. Load the KIS context this task needs: State first, then relevant Intent, then only required Knowledge. When the task touches product direction, scope, priorities, or the line between a POC and an MVP and `kis/intent/compass.md` exists, read it and `.agents/skills/kis/references/product-compass.md` (Planning Use).
+1. Load the KIS context this task needs: State first, then relevant Intent, then only required Knowledge. Read `kis/knowledge/project.md` and `kis/intent/compass.md` when they exist.
 2. QUESTION: interview the user until you reach a shared understanding. One question at a time, waiting for each answer. Walk down each branch of the decision tree, resolving dependencies one by one. Give your recommended answer with every question. Look up any fact that KIS, the repository, or a tool can answer instead of asking it. Do not continue to the plan until the user confirms the understanding is shared.
-3. CHALLENGE: name weak requirements, risky assumptions, missing edge cases, scope creep, and approaches heavier than the goal needs. Give the practical tradeoff and a clearer path. Check the scope against the compass: place work as POC or MVP, and raise any conflict with a Boundary, Principle, or `[decision]` with the user. Do not override the compass or edit it here; a change of direction goes through the compass command.
+3. CHALLENGE: name weak requirements, risky assumptions, missing edge cases, scope creep, and approaches heavier than the goal needs. Give the practical tradeoff and a clearer path.
 4. STRUCTURE: classify every new fact into exactly one layer.
 
 ```text

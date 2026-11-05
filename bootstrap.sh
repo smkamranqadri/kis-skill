@@ -17,7 +17,8 @@ Options:
   --ref <git-ref>       Git ref to install from. Defaults to main.
                         Can also be set with KIS_SKILL_REF.
   --source <path>       Local source repo/package path. Skips git clone.
-  --target <path>       Project root for install. Defaults to current directory.
+  --target <path>       Project root for install. Defaults to the project that holds
+                        --install-dir when given, otherwise the current directory.
   --install-dir <path>  Installed skill package for check/update.
                         Defaults to <target>/.agents/skills/kis.
   --force               Replace an existing install during install.
@@ -55,6 +56,7 @@ repo_url="${KIS_SKILL_REPO:-}"
 repo_ref="${KIS_SKILL_REF:-main}"
 source_arg=""
 target_root="."
+target_given="false"
 install_dir=""
 force="false"
 create_claude_link="true"
@@ -82,6 +84,7 @@ while [[ $# -gt 0 ]]; do
     --target)
       [[ $# -ge 2 ]] || die "--target requires a path"
       target_root="$2"
+      target_given="true"
       shift 2
       ;;
     --install-dir)
@@ -128,6 +131,18 @@ if [[ -z "$source_arg" ]]; then
   trap 'rm -rf "$tmp_dir"' EXIT
   git clone --depth 1 --branch "$repo_ref" "$repo_url" "$tmp_dir/kis-loop-skill" >/dev/null
   source_arg="$tmp_dir/kis-loop-skill"
+fi
+
+# Adapters are refreshed in the project that holds the install, never in whatever directory the
+# command happens to run from.
+if [[ -n "$install_dir" && -d "$install_dir" ]]; then
+  install_dir="$(cd "$install_dir" && pwd -P)"
+  if [[ "$target_given" == "false" ]]; then
+    case "$install_dir" in
+      */.agents/skills/kis) target_root="${install_dir%/.agents/skills/kis}" ;;
+      *) [[ "$command_name" == "update" ]] && die "--install-dir $install_dir is not <project>/.agents/skills/kis; pass --target <project root>" ;;
+    esac
+  fi
 fi
 
 target_root="$(mkdir -p "$target_root" && cd "$target_root" && pwd -P)"

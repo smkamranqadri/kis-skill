@@ -30,25 +30,5 @@
   {
     "query": "Fix this TypeScript error in one file.",
     "should_trigger": false
-  },
-  {
-    "query": "Run /kis:compass I want to build a personal AI companion.",
-    "should_trigger": true
-  },
-  {
-    "query": "Help me define the product direction and vision before we build anything, and write it into project memory.",
-    "should_trigger": true
-  },
-  {
-    "query": "What should the POC test versus what the MVP commits to? Record it in the KIS compass.",
-    "should_trigger": true
-  },
-  {
-    "query": "We changed our target audience; revise the product compass in kis/intent.",
-    "should_trigger": true
-  },
-  {
-    "query": "Add a compass needle component to the hiking app map screen.",
-    "should_trigger": false
   }
 ]

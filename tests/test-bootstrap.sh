@@ -67,16 +67,35 @@ for command_file in "$repo_root"/skills/kis/commands/*.md; do
   cmp -s "$command_file" "$codex_home/prompts/kis-$(basename "$command_file")" || { echo "default install did not copy $(basename "$command_file") to the Codex prompts" >&2; exit 1; }
 done
 printf 'stale\n' > "$codex_home/prompts/kis-start.md"
-rm -f "$codex_home/prompts/kis-compass.md"
+rm -f "$codex_home/prompts/kis-act.md"
 sed -i 's/^  version: ".*"$/  version: "0.0.1"/' "$target_codex/.agents/skills/kis/SKILL.md"
 CODEX_HOME="$codex_home" "$bootstrap_script" update --source "$repo_root" --target "$target_codex" >/dev/null
 cmp -s "$repo_root/skills/kis/commands/start.md" "$codex_home/prompts/kis-start.md" || { echo "update did not refresh a stale Codex prompt" >&2; exit 1; }
-cmp -s "$repo_root/skills/kis/commands/compass.md" "$codex_home/prompts/kis-compass.md" || { echo "update did not restore a missing Codex prompt" >&2; exit 1; }
+cmp -s "$repo_root/skills/kis/commands/act.md" "$codex_home/prompts/kis-act.md" || { echo "update did not restore a missing Codex prompt" >&2; exit 1; }
 
 target_project_only="$tmp_dir/project-only"
 mkdir -p "$target_project_only" "$tmp_dir/untouched-codex-home"
 CODEX_HOME="$tmp_dir/untouched-codex-home" "$bootstrap_script" install --source "$repo_root" --target "$target_project_only" --commands-host project >/dev/null
 test ! -e "$tmp_dir/untouched-codex-home/prompts" || { echo "--commands-host project wrote Codex prompts" >&2; exit 1; }
+
+# An update given only --install-dir refreshes adapters in the project that holds the install, not in
+# the directory it runs from (seen: run from a source clone, it wired that clone).
+elsewhere="$tmp_dir/source-clone"
+mkdir -p "$elsewhere"
+rm "$target/.pi/prompts/kis-start.md"
+(cd "$elsewhere" && "$bootstrap_script" update --source "$repo_root" --install-dir ../project/.agents/skills/kis >/dev/null)
+[[ -z "$(ls -A "$elsewhere")" ]] || { echo "update with only --install-dir wrote into the current directory: $(ls -A "$elsewhere" | paste -sd ' ' -)" >&2; exit 1; }
+test -L "$target/.pi/prompts/kis-start.md" || { echo "update with only --install-dir did not refresh the project's adapters" >&2; exit 1; }
+# A custom install dir names no project, so an update without --target refuses and writes nothing.
+mkdir -p "$tmp_dir/custom"
+cp -R "$target/.agents/skills/kis" "$tmp_dir/custom/kis"
+if (cd "$elsewhere" && "$bootstrap_script" update --source "$repo_root" --install-dir ../custom/kis >"$tmp_dir/custom.out" 2>&1); then
+  echo "update with a custom --install-dir and no --target did not refuse" >&2; exit 1
+fi
+[[ "$(cat "$tmp_dir/custom.out")" == "Error: --install-dir $tmp_dir/custom/kis is not <project>/.agents/skills/kis; pass --target <project root>" ]] || { echo "custom --install-dir refusal message wrong: $(cat "$tmp_dir/custom.out")" >&2; exit 1; }
+[[ -z "$(ls -A "$elsewhere")" ]] || { echo "a refused update wrote into the current directory" >&2; exit 1; }
+# check with a custom install dir still works without --target.
+(cd "$elsewhere" && "$bootstrap_script" check --source "$repo_root" --install-dir ../custom/kis) | grep -q '^Already current:' || { echo "check with a custom --install-dir failed" >&2; exit 1; }
 
 # Every entry point defaults to the same host selection; the scripts that only forward it must not drift.
 for entry in "$repo_root/bootstrap.sh" "$repo_root/scripts/install-skill.sh"; do

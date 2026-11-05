@@ -15,7 +15,7 @@ codex_dir="$tmp_dir/codex-prompts"
 mkdir -p "$skill_dir/commands"
 printf -- '---\ndescription: test\n---\n\n# Start\n' > "$skill_dir/commands/start.md"
 printf -- '---\ndescription: test\n---\n\n# Sync\n' > "$skill_dir/commands/sync.md"
-printf -- '---\ndescription: test\n---\n\n# Compass\n' > "$skill_dir/commands/compass.md"
+printf -- '---\ndescription: test\n---\n\n# Gadget\n' > "$skill_dir/commands/gadget.md"
 
 fail() {
   echo "$*" >&2
@@ -28,7 +28,7 @@ link="$target_root/.claude/commands/kis"
 [[ -L "$link" ]] || fail "Claude command link was not created"
 [[ "$(readlink "$link")" == "../../.agents/skills/kis/commands" ]] || fail "Claude command link is not relative to the project"
 [[ -f "$link/start.md" ]] || fail "Claude command link is broken"
-[[ -f "$link/compass.md" ]] || fail "Claude command link does not reach compass"
+[[ -f "$link/gadget.md" ]] || fail "Claude command link does not reach gadget"
 
 "$script_under_test" --target "$target_root" >/dev/null
 [[ -f "$link/start.md" ]] || fail "re-running install broke the Claude command link"
@@ -38,7 +38,7 @@ pi_link="$target_root/.pi/prompts/kis-start.md"
 [[ "$(readlink "$pi_link")" == "../../.agents/skills/kis/commands/start.md" ]] || fail "Pi prompt link is not relative to the project"
 [[ -f "$pi_link" ]] || fail "Pi prompt link is broken"
 [[ -L "$target_root/.pi/prompts/kis-sync.md" ]] || fail "Pi prompt link was not created for every command"
-[[ -f "$target_root/.pi/prompts/kis-compass.md" ]] || fail "Pi prompt link was not created for compass"
+[[ -f "$target_root/.pi/prompts/kis-gadget.md" ]] || fail "Pi prompt link was not created for gadget"
 
 opencode_link="$target_root/.opencode/command/kis-start.md"
 [[ ! -e "$opencode_link" ]] || fail "the default host should not install OpenCode commands"
@@ -48,12 +48,12 @@ opencode_link="$target_root/.opencode/command/kis-start.md"
 [[ "$(readlink "$opencode_link")" == "../../.agents/skills/kis/commands/start.md" ]] || fail "OpenCode command link is not relative to the project"
 [[ -f "$opencode_link" ]] || fail "OpenCode command link is broken"
 [[ -L "$target_root/.opencode/command/kis-sync.md" ]] || fail "OpenCode command link was not created for every command"
-[[ -f "$target_root/.opencode/command/kis-compass.md" ]] || fail "OpenCode command link was not created for compass"
+[[ -f "$target_root/.opencode/command/kis-gadget.md" ]] || fail "OpenCode command link was not created for gadget"
 
 codex_output="$("$script_under_test" --target "$target_root" --host codex --codex-prompts-dir "$codex_dir")"
 [[ -f "$codex_dir/kis-start.md" ]] || fail "Codex prompt was not installed"
 [[ -f "$codex_dir/kis-sync.md" ]] || fail "Codex prompt was not installed"
-[[ -f "$codex_dir/kis-compass.md" ]] || fail "Codex prompt was not installed for compass"
+[[ -f "$codex_dir/kis-gadget.md" ]] || fail "Codex prompt was not installed for gadget"
 [[ "$codex_output" == *"3 file(s)"* ]] || fail "Codex install did not report installed count"
 
 "$script_under_test" --target "$target_root" --host all --codex-prompts-dir "$codex_dir" --remove >/dev/null
@@ -66,10 +66,10 @@ codex_output="$("$script_under_test" --target "$target_root" --host codex --code
 auto_home="$tmp_dir/auto-codex-home"
 mkdir -p "$auto_home"
 auto_output="$(CODEX_HOME="$auto_home" "$script_under_test" --target "$target_root")"
-[[ -f "$auto_home/prompts/kis-start.md" && -f "$auto_home/prompts/kis-compass.md" ]] || fail "auto did not install Codex prompts into an existing Codex home"
+[[ -f "$auto_home/prompts/kis-start.md" && -f "$auto_home/prompts/kis-gadget.md" ]] || fail "auto did not install Codex prompts into an existing Codex home"
 [[ "$auto_output" == *"Codex prompts: 3 file(s)"* ]] || fail "auto did not report the Codex install: $auto_output"
 CODEX_HOME="$auto_home" "$script_under_test" --target "$target_root" --remove >/dev/null
-[[ ! -e "$auto_home/prompts/kis-start.md" && ! -e "$auto_home/prompts/kis-compass.md" ]] || fail "auto --remove left Codex prompts"
+[[ ! -e "$auto_home/prompts/kis-start.md" && ! -e "$auto_home/prompts/kis-gadget.md" ]] || fail "auto --remove left Codex prompts"
 [[ ! -e "$link" ]] || fail "auto --remove left the Claude command link"
 
 CODEX_HOME="$auto_home" "$script_under_test" --target "$target_root" --host project >/dev/null
@@ -83,6 +83,19 @@ missing_output="$(CODEX_HOME="$missing_home" "$script_under_test" --target "$tar
 
 CODEX_HOME="$missing_home" "$script_under_test" --target "$target_root" --host codex >/dev/null
 [[ -f "$missing_home/prompts/kis-start.md" ]] || fail "--host codex did not install into a missing Codex home"
+
+# A command dropped from the package loses its adapter on every host at the next install; other
+# commands and files that are not KIS adapters stay.
+"$script_under_test" --target "$target_root" --host all --codex-prompts-dir "$codex_dir" >/dev/null
+printf 'mine\n' > "$codex_dir/my-prompt.md"
+printf 'mine\n' > "$target_root/.pi/prompts/my-prompt.md"
+rm "$skill_dir/commands/gadget.md"
+"$script_under_test" --target "$target_root" --host all --codex-prompts-dir "$codex_dir" >/dev/null
+for dropped in "$target_root/.pi/prompts/kis-gadget.md" "$target_root/.opencode/command/kis-gadget.md" "$codex_dir/kis-gadget.md"; do
+  [[ ! -e "$dropped" && ! -L "$dropped" ]] || fail "a dropped command kept its adapter: $dropped"
+done
+[[ "$(find "$target_root/.pi/prompts" "$target_root/.opencode/command" "$codex_dir" -name 'kis-*.md' | wc -l | tr -d ' ')" == "6" ]] || fail "pruning removed adapters of shipped commands"
+[[ -f "$codex_dir/my-prompt.md" && -f "$target_root/.pi/prompts/my-prompt.md" ]] || fail "pruning removed a file that is not a KIS adapter"
 
 empty_skill="$tmp_dir/empty/.agents/skills/kis"
 mkdir -p "$empty_skill"

@@ -1,8 +1,8 @@
 ---
 name: kis
-description: Operate KIS project memory under `kis/`, where Knowledge holds stable facts, Intent holds goals and plans, and State holds the current task, blocker, proof, and next action. Use when the repository has a `kis/` directory, when starting or resuming multi-step work or asking where it left off and what is next, when a decision, plan, blocker, proof, or status needs recording, when the work is product direction (why the product exists, who it serves, vision, boundaries, or what a POC should test versus what an MVP commits to), when choosing how much process a task needs, when project memory has gone stale or contradictory, or when a project needs memory set up from scratch. Skip for trivial one-off work and questions the code already answers.
+description: Operate KIS project memory under `kis/`, where Knowledge holds stable facts, Intent holds goals and plans, and State holds the current task, blocker, proof, and next action. Use when the repository has a `kis/` directory, when starting or resuming multi-step work or asking where it left off and what is next, when a decision, plan, blocker, proof, or status needs recording, when choosing how much process a task needs, when project memory has gone stale or contradictory, or when a project needs memory set up from scratch. Skip for trivial one-off work and questions the code already answers.
 metadata:
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # KIS
@@ -11,8 +11,8 @@ KIS is the project's operational memory. Keep it small and synchronized so a fre
 
 ```text
 kis/
-  knowledge/   what is true now: code, stack, architecture, devices, the outside world, domain terms, constraints, standards, durable technical decisions
-  intent/      direction: product decisions (the compass), PRDs, plans, acceptance criteria, design direction
+  knowledge/   stable facts: stack, architecture, domain terms, constraints, standards, durable decisions; project.md says what the product is today
+  intent/      direction: compass.md (where the product is going), PRDs, plans, acceptance criteria, design direction
   state/       current reality: branch, task, blocker, commands, status, proof, next action
 ```
 
@@ -86,8 +86,6 @@ Done when: every assumption you are relying on has been put to the user.
 
 ### STRUCTURE
 
-Product decisions (who the product serves, why, where it is going) belong only to the compass, never to Knowledge. Facts about the outside world found during direction work, such as research or a provider's rules, go to Knowledge with their source, and the compass links to them.
-
 Done when: every new fact sits in exactly one layer.
 
 ### PLAN
@@ -123,10 +121,6 @@ Proof:
 
 If verification fails, record it in State as the current blocker instead of marking the task done.
 
-## Product Direction
-
-Direction work (why the product exists, who it serves, its vision, where to focus, what not to build, and POC versus MVP) is recorded as a Product Compass at `kis/intent/compass.md`. Read [product-compass.md](references/product-compass.md) before writing or revising it, and before planning work that touches direction. The compass informs the PRD and plan and replaces neither, and operational status stays in State.
-
 ## Commands
 
-Each file in `commands/` is an explicit entry point into one step of this loop: `start` (LOAD), `plan`, `compass` (product direction, then Intent), `act`, `sync`, `check` (maintenance), and `init` (bootstrap). A command re-enters the loop; it is not a second workflow. For host adapters and the re-anchor layer, read [commands.md](references/commands.md).
+Each file in `commands/` is an explicit entry point into one step of this loop: `start` (LOAD), `plan`, `act`, `sync`, `check` (maintenance), and `init` (bootstrap). A command re-enters the loop; it is not a second workflow. For host adapters and the re-anchor layer, read [commands.md](references/commands.md).

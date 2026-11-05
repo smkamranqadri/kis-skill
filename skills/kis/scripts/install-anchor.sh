@@ -438,7 +438,7 @@ apply_instructions() {
         - Prove work with real command or verification output before marking anything done.
         - Synchronize the KIS layers that changed when work finishes.
         - Full instructions: `.agents/skills/kis/SKILL.md`.
-        - Commands live in `.agents/skills/kis/commands/`: start, plan, compass, act, sync, check, init.
+        - Commands live in `.agents/skills/kis/commands/`: start, plan, act, sync, check, init.
           Claude `/kis:start`, Pi and OpenCode `/kis-start`, Codex `/prompts:kis-start`.
           Antigravity has no custom slash commands: name the step and follow its command file.
         #{end_marker}
@@ -458,7 +458,9 @@ apply_instructions() {
           puts "#{path}: no KIS block to remove"
           exit 0
         end
-        File.write(path, text.sub(pattern, "").gsub(/\n{3,}/, "\n\n").lstrip)
+        # Adding the block may have added a blank line before it; collapse what is left to one newline.
+        rest = text.sub(pattern, "").gsub(/\n{3,}/, "\n\n").lstrip
+        File.write(path, rest.empty? ? "" : rest.sub(/\n+\z/, "\n"))
         puts "#{path}: KIS block removed"
       else
         if present

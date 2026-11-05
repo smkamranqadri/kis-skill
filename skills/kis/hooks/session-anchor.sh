@@ -24,7 +24,7 @@ p
 p "This project uses KIS project memory under \`kis/\`. Knowledge = stable facts. Intent = goals and plans. State = current reality."
 p "Load State first, put each fact in one layer, prove work before marking it done, and synchronize only what changed."
 p "Skill: .agents/skills/kis/SKILL.md"
-p "Commands in .agents/skills/kis/commands/: start, plan, compass, act, sync, check, init."
+p "Commands in .agents/skills/kis/commands/: start, plan, act, sync, check, init."
 p "Claude /kis:start, Pi and OpenCode /kis-start, Codex /prompts:kis-start. Antigravity has no custom slash commands: name the step instead."
 p
 

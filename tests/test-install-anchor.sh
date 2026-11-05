@@ -186,6 +186,7 @@ check_removed="$("$script_under_test" --target "$target_root" --check)"
 [[ "$(grep -c '^Command Code SessionStart hook: missing$' <<< "$check_removed")" == "1" ]] || fail "--check after --remove still reports the Command Code hook"
 grep -q '<!-- kis:anchor:start -->' "$agents_file" && fail "--remove left the KIS block"
 grep -q 'Existing instructions.' "$agents_file" || fail "--remove deleted unrelated instructions"
+[[ "$(cat "$agents_file"; printf x)" == "$(printf '# Project\n\nExisting instructions.\nx')" ]] || fail "--remove did not hand AGENTS.md back byte for byte: $(od -c "$agents_file" | tail -n 3)"
 
 settings_root="$tmp_dir/settings-existing"; mkdir -p "$settings_root/.claude"
 printf '{}\n' > "$settings_root/.claude/settings.json"; cp "$settings_root/.claude/settings.json" "$tmp_dir/claude-empty-original.json"

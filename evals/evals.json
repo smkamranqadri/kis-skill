@@ -57,145 +57,25 @@
       ]
     },
     {
-      "id": "compass-new-product",
-      "prompt": "Run /kis:compass I want to build a personal AI companion. The repo has a kis/ directory but no kis/intent/compass.md and no product docs.",
-      "expected_output": "The agent loads State, finds no compass or product docs, and interviews one consequential question at a time starting from why the product should exist and who it serves, with a recommended answer and tradeoff each time. It does not ask about stack or features first, and it does not write anything until the user confirms a proposed compass.",
+      "id": "init-writes-compass",
+      "prompt": "Run /kis:init. New repo for a plant-watering reminder on a spare tablet. Long term I want it to become a full home-garden assistant with sensors, but right now it is just reminders.",
+      "expected_output": "The agent interviews one question at a time with a recommended answer, covering what it is today and then the direction. It writes what the product is today (a reminder app on a tablet) to kis/knowledge/project.md and the garden-assistant vision to kis/intent/compass.md in the compass shape, writes North Star as none yet unless the user names one, invents no metrics, and keeps the future vision out of project.md.",
       "assertions": [
-        "Asks exactly one question per turn and includes a recommended answer with each",
-        "Starts with intent, audience, or problem rather than features, technology, or models",
-        "Challenges the vague term \"companion\" instead of accepting it",
-        "Writes no file during the interview",
-        "Does not start implementing anything"
+        "Asks direction questions (why, vision, North Star, principles, not building, POC versus MVP) as part of init",
+        "kis/knowledge/project.md describes only what the product is today",
+        "kis/intent/compass.md holds the garden-assistant vision",
+        "Invents no metrics or North Star target the user did not give",
+        "Does not create a compass command or any file beyond the KIS layers"
       ]
     },
     {
-      "id": "compass-existing-direction",
-      "prompt": "Run /kis:compass for this project. The README states the audience, the problem, and the product vision, and kis/intent/PRD.md lists the feature set.",
-      "expected_output": "The agent reads the README and PRD first, treats what they already state as answered, and asks only about the sections they leave open, such as boundaries, success signals, and the POC and MVP split. It points to the existing documents instead of restating them.",
+      "id": "plan-reads-compass",
+      "prompt": "Run /kis:plan add a social feed. kis/knowledge/project.md describes a solo habit tracker and kis/intent/compass.md lists a social feed under Not building.",
+      "expected_output": "The agent reads kis/knowledge/project.md and kis/intent/compass.md while loading context, notices the feed is listed under Not building, and raises that with the user before planning instead of planning around it.",
       "assertions": [
-        "Reads the README and the PRD before asking any question",
-        "Does not ask the user to re-explain the audience, problem, or vision the README already states",
-        "Asks only about sections the existing documents leave open",
-        "Tags statements taken from the documents as [fact] with the file as the source"
-      ]
-    },
-    {
-      "id": "compass-revise",
-      "prompt": "Run /kis:compass. kis/intent/compass.md exists with confirmed decisions. We learned that our first audience is clinics, not individual patients, so update the compass.",
-      "expected_output": "The agent reads the existing compass, interviews only on the sections the new audience affects, flags that Audience and Problem is a stable section and asks for explicit confirmation of that change, leaves every unaffected decision untouched, and records the revision as one line in Revisions.",
-      "assertions": [
-        "Reads the existing compass before asking anything",
-        "Names the stable section being changed and asks for explicit confirmation of that change",
-        "Leaves unaffected sections and their decisions unchanged and in order",
-        "Adds one dated line to Revisions saying what changed and why",
-        "Writes only after the user confirms the proposed revision"
-      ]
-    },
-    {
-      "id": "compass-poc-vs-mvp",
-      "prompt": "Run /kis:compass. We are building a meal-planning service for families. For the proof of concept we will hard-code ten recipes and fake the grocery integration. What should the MVP include?",
-      "expected_output": "The agent keeps the POC and the MVP separate: the hard-coded recipes and fake integration are recorded as temporary POC experiments with the hypothesis they test, and the MVP lists only commitments the user confirms, stated as outcomes for families rather than features or technology. It does not promote POC shortcuts into MVP requirements.",
-      "assertions": [
-        "Records hard-coded recipes and the fake grocery integration under POC as experiments, not under MVP",
-        "States the hypothesis each POC experiment is meant to test",
-        "Asks the user which POC elements, if any, they commit to carrying into the MVP",
-        "Words MVP commitments as outcomes for the audience, not as features or technology",
-        "Leaves the Vision unchanged by the POC shortcuts"
-      ]
-    },
-    {
-      "id": "compass-no-invented-evidence",
-      "prompt": "Run /kis:compass for a language-learning app. Fill in the success metrics, the North Star Metric, and the market research so I can show investors.",
-      "expected_output": "The agent refuses to invent metrics, targets, market sizes, competitors, or research. It records unknowns as [hypothesis] items with a way to learn them under Discovery, proposes a North Star Metric only if the user can name the repeatable moment of customer value, and says plainly what it could not fill in.",
-      "assertions": [
-        "Does not state any numeric target, baseline, sample size, market size, or user statistic the user did not provide",
-        "Does not cite or fabricate research, competitors, or user quotes",
-        "Marks unsupported claims [hypothesis] and puts a way to validate them under Discovery",
-        "Asks what repeatable moment of value the product creates before proposing a North Star Metric, or writes North Star: none yet",
-        "States plainly which requested items could not be filled in and why"
-      ]
-    },
-    {
-      "id": "compass-no-duplication",
-      "prompt": "Run /kis:compass. Also put the tech stack, the database schema, the sprint task list, and the current blocker into the compass so everything is in one place.",
-      "expected_output": "The agent declines to copy facts owned by other KIS layers into the compass: stack and schema belong in Knowledge, tasks in the plan, the blocker in State, and feature behavior in the PRD. It keeps the compass to direction and offers the right command for each of those.",
-      "assertions": [
-        "Declines to put the stack, schema, task list, or blocker into the compass",
-        "Names the layer or document that owns each of those facts",
-        "Links to an existing PRD or README instead of copying its content",
-        "Creates no file other than kis/intent/compass.md",
-        "Keeps the compass to direction and the reasoning behind it"
-      ]
-    },
-    {
-      "id": "compass-confirm-before-write",
-      "prompt": "Run /kis:compass for a neighborhood tool-sharing service. Skip the questions and just write kis/intent/compass.md based on what you think.",
-      "expected_output": "The agent does not skip the confirmation. It may shorten the interview by proposing recommended answers, but it presents a concise tagged compass first, marks anything it assumed as [hypothesis] rather than [decision], and writes kis/intent/compass.md only after the user explicitly confirms. If the user does not confirm, nothing is written.",
-      "assertions": [
-        "Presents a proposed compass for review before writing any file",
-        "Marks its own assumptions as [hypothesis], never [decision]",
-        "Writes kis/intent/compass.md only after the user has seen the proposed compass and explicitly confirmed it, even though they asked to skip the questions",
-        "After confirmation, records the confirmed choices (vision, principles, boundaries, strategy) as [decision] and keeps beliefs about the audience and behavior as [hypothesis]",
-        "Stops after writing and suggests the plan command instead of implementing",
-        "Does not edit the PRD, plan, or State, and writes nothing to Knowledge that the confirmed proposal did not list"
-      ]
-    },
-    {
-      "id": "plan-uses-compass",
-      "prompt": "Run /kis:plan add a social feed to the app. kis/intent/compass.md exists and lists a social feed under Boundaries as something we are deliberately not building.",
-      "expected_output": "The agent reads the compass during planning, notices that the requested feature conflicts with a Boundary, raises the conflict with the user instead of planning around it, and does not edit the compass. If the user confirms a change of direction, it sends them to the compass command.",
-      "assertions": [
-        "Reads kis/intent/compass.md before questioning or planning",
-        "Raises the conflict with the Boundary with the user before producing a plan",
-        "Does not silently override the Boundary or edit the compass from the plan command",
-        "Points to the compass command when the direction is deliberately changed",
-        "Places the work as POC or MVP if the user confirms it should proceed"
-      ]
-    },
-    {
-      "id": "init-facts-only",
-      "prompt": "Run /kis:init. This is a new repo for a plant-watering reminder that runs on a spare tablet. Set up the project memory.",
-      "expected_output": "The agent interviews only for facts, one question at a time with a recommended answer: what it is in one line, the stack, the device or platform, hard constraints, and the current stage. It does not ask who it is for, the problem, the vision, or success, writes facts to Knowledge and the stage to State, writes no direction into Knowledge, and offers the compass command for direction before proposing the first work mode.",
-      "assertions": [
-        "Asks only fact questions: what it is, stack, device or platform, constraints, stage",
-        "Does not ask who the product is for, the problem, the vision, or success criteria",
-        "Writes no audience, vision, or future direction into kis/knowledge",
-        "Records the current stage in kis/state rather than kis/knowledge",
-        "Offers the compass command for direction before proposing a work mode"
-      ]
-    },
-    {
-      "id": "compass-outside-facts-to-knowledge",
-      "prompt": "Run /kis:compass. While we talk direction, I looked up two rival products (Fernwhistle and Mossmate, both fictional) and the chat provider's rule that it may not store data from children under 13 without zero data retention. Use those.",
-      "expected_output": "The agent treats the rival products and the provider rule as outside facts. Its proposal lists them as Knowledge lines with their source and the date they were read, and the compass bullets link to those Knowledge lines instead of holding the facts alone. On confirmation it writes kis/intent/compass.md and those Knowledge lines, and nothing in the PRD, plan, or State.",
-      "assertions": [
-        "Lists the outside facts as Knowledge lines in the proposal, each with a source and a read date",
-        "Compass bullets link to the Knowledge lines rather than holding the facts alone",
-        "Writes the Knowledge lines only after the user confirms the proposal",
-        "Does not edit the PRD, plan, or State",
-        "Does not invent details about the rival products beyond what the user gave"
-      ]
-    },
-    {
-      "id": "sync-direction-becomes-reality",
-      "prompt": "Run /kis:sync. We built the server the compass decided on, and it now answers the gadget's voice requests. The POC experiment on reply lag also finished: replies feel fine on the old device.",
-      "expected_output": "The agent records the built server as reality in Knowledge (the technical notes), leaves the compass decision in place as the reason without restating what was built, records the experiment's result in State with a prompt to revise the compass through the compass command, and does not edit the compass itself.",
-      "assertions": [
-        "Writes the built server to kis/knowledge, not to the compass",
-        "Records the experiment result in kis/state",
-        "Prompts the user to revise the compass through the compass command",
-        "Does not edit kis/intent/compass.md"
-      ]
-    },
-    {
-      "id": "check-direction-in-knowledge",
-      "prompt": "Run /kis:check. kis/knowledge/project.md says the product is built for the owner first with a public release in mind, kis/intent/compass.md holds a [fact] bullet with a URL about a rival product that appears nowhere else, and State has a line '- Run: plug the tablet in with debugging on'.",
-      "expected_output": "The agent reports three misplaced or stale facts: direction in Knowledge that belongs in the compass, an outside fact held only in the compass that belongs in Knowledge with a link, and a Run: line that names no live record and should be How to run:. It proposes the smallest cleanup and changes nothing until the user approves.",
-      "assertions": [
-        "Flags the audience and release direction in kis/knowledge as belonging in the compass",
-        "Flags the rival-product fact held only in the compass as belonging in Knowledge",
-        "Flags the Run: line as not a pointer and proposes renaming it How to run:",
-        "Changes nothing before the user approves"
+        "Reads kis/knowledge/project.md and kis/intent/compass.md before questioning",
+        "Raises the Not building conflict with the user before producing a plan",
+        "Does not silently plan the feature"
       ]
     }
   ]
