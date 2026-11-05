@@ -431,9 +431,9 @@ apply_instructions() {
         #{start_marker}
         ## KIS Project Memory
 
-        This project uses KIS memory under `kis/`. Knowledge = stable facts. Intent = goals and plans. State = current reality.
+        This project uses KIS memory under `kis/`. Knowledge = stable facts. Intent = goals and plans. Reality = what shipped. State = what is happening now.
 
-        - Read `kis/state/` before planning or implementing, then only the Intent and Knowledge the task needs.
+        - Read `kis/state/` before planning or implementing, then only the Intent, Reality, and Knowledge the task needs.
         - Put each fact in exactly one layer, and update an existing file instead of creating a new one.
         - Prove work with real command or verification output before marking anything done.
         - Synchronize the KIS layers that changed when work finishes.

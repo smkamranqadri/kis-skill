@@ -21,7 +21,7 @@ p() { echo "$@"; printed=$((printed + 1)); }
 
 p "# KIS Anchor"
 p
-p "This project uses KIS project memory under \`kis/\`. Knowledge = stable facts. Intent = goals and plans. State = current reality."
+p "This project uses KIS project memory under \`kis/\`. Knowledge = stable facts. Intent = goals and plans. Reality = what shipped. State = what is happening now."
 p "Load State first, put each fact in one layer, prove work before marking it done, and synchronize only what changed."
 p "Skill: .agents/skills/kis/SKILL.md"
 p "Commands in .agents/skills/kis/commands/: start, plan, act, sync, check, init."

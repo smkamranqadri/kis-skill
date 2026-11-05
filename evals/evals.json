@@ -24,14 +24,14 @@
       ]
     },
     {
-      "id": "standard-mode-specialist-unavailable",
-      "prompt": "Use $kis for a multi-file auth refactor. The ideal auth/security specialist skill is not installed. Continue with the correct process.",
-      "expected_output": "The agent identifies Standard or Phase risk, states that the specialist is unavailable, and creates a checkpoint instead of pretending the specialist ran.",
+      "id": "sync-routes-shipped-work",
+      "prompt": "Use $kis and sync. We just shipped weekly streak badges in the fictional habit tracker Tallybird. The badge sometimes shows on the wrong day for users in UTC+13, and nobody has planned a fix yet. Also, the export button I am building now crashes on an empty list, but export has not shipped.",
+      "expected_output": "The agent describes streak badges in kis/reality/ (updating overview.md), records the UTC+13 wrong-day bug as a defect in kis/reality/defects.md, keeps the unshipped export crash in State as current work, and adds nothing to the Intent backlog because no fix is planned.",
       "assertions": [
-        "Classifies the work as Standard or Phase risk rather than Fast Mode",
-        "States the matched specialist or tool is unavailable",
-        "Offers install or enablement when supported",
-        "Continues only if the user enables the tool, reduces scope, switches to Fast Mode, or accepts fallback risk"
+        "Describes the shipped streak badges in kis/reality/ and updates kis/reality/overview.md",
+        "Records the UTC+13 wrong-day bug in kis/reality/defects.md",
+        "Keeps the export crash in kis/state/, not in Reality",
+        "Does not add a backlog item for the badge bug, since no fix is planned"
       ]
     },
     {
@@ -59,21 +59,22 @@
     {
       "id": "init-writes-compass",
       "prompt": "Run /kis:init. New repo for a plant-watering reminder on a spare tablet. Long term I want it to become a full home-garden assistant with sensors, but right now it is just reminders.",
-      "expected_output": "The agent interviews one question at a time with a recommended answer, covering what it is today and then the direction. It writes what the product is today (a reminder app on a tablet) to kis/knowledge/project.md and the garden-assistant vision to kis/intent/compass.md in the compass shape, writes North Star as none yet unless the user names one, invents no metrics, and keeps the future vision out of project.md.",
+      "expected_output": "The agent interviews one question at a time with a recommended answer, covering purpose, audience, and problem and then the direction. It writes purpose, audience, and problem (a reminder app on a tablet) to kis/knowledge/project.md and the garden-assistant vision to kis/knowledge/compass.md in the compass shape, writes North Star as none yet unless the user names one, invents no metrics, keeps the future vision out of project.md, and creates no Reality because nothing has shipped.",
       "assertions": [
-        "Asks direction questions (why, vision, North Star, principles, not building, POC versus MVP) as part of init",
-        "kis/knowledge/project.md describes only what the product is today",
-        "kis/intent/compass.md holds the garden-assistant vision",
+        "Asks direction questions (vision, North Star, principles, not building, POC versus MVP) as part of init",
+        "kis/knowledge/project.md holds purpose, audience, and problem, and no future vision",
+        "kis/knowledge/compass.md holds the garden-assistant vision",
         "Invents no metrics or North Star target the user did not give",
+        "Creates no kis/reality/ files, since nothing has shipped",
         "Does not create a compass command or any file beyond the KIS layers"
       ]
     },
     {
       "id": "plan-reads-compass",
-      "prompt": "Run /kis:plan add a social feed. kis/knowledge/project.md describes a solo habit tracker and kis/intent/compass.md lists a social feed under Not building.",
-      "expected_output": "The agent reads kis/knowledge/project.md and kis/intent/compass.md while loading context, notices the feed is listed under Not building, and raises that with the user before planning instead of planning around it.",
+      "prompt": "Run /kis:plan add a social feed. kis/knowledge/project.md describes a solo habit tracker and kis/knowledge/compass.md lists a social feed under Not building.",
+      "expected_output": "The agent reads kis/knowledge/project.md and kis/knowledge/compass.md while loading context, notices the feed is listed under Not building, and raises that with the user before planning instead of planning around it.",
       "assertions": [
-        "Reads kis/knowledge/project.md and kis/intent/compass.md before questioning",
+        "Reads kis/knowledge/project.md and kis/knowledge/compass.md before questioning",
         "Raises the Not building conflict with the user before producing a plan",
         "Does not silently plan the feature"
       ]

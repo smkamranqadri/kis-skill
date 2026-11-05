@@ -9,8 +9,8 @@ Commands are explicit entry points into the KIS loop. The re-anchor layer keeps 
 | File | Step |
 | --- | --- |
 | `start.md` | LOAD: recover context, report current reality, propose a work mode. |
-| `init.md` | Bootstrap `kis/` for a project that has none, including `kis/intent/compass.md`. |
-| `plan.md` | QUESTION, CHALLENGE, STRUCTURE, PLAN: interview, then produce an approved scope. Reads `kis/knowledge/project.md` and `kis/intent/compass.md`. |
+| `init.md` | Bootstrap `kis/` for a project that has none, including `kis/knowledge/project.md`, `kis/knowledge/compass.md`, and, once something has shipped, `kis/reality/overview.md`. |
+| `plan.md` | QUESTION, CHALLENGE, STRUCTURE, PLAN: interview, then produce an approved scope. Reads `kis/knowledge/project.md` and `kis/knowledge/compass.md`. |
 | `act.md` | ACT: execute the current task with proof. |
 | `sync.md` | SYNCHRONIZE: write what changed into the right layer. |
 | `check.md` | Maintenance: audit for contradictions, staleness, and bloat. |
@@ -33,7 +33,7 @@ Claude, Pi, and OpenCode links follow package updates. Codex prompts are user-le
 
 Pi, OpenCode, and Antigravity discover the skill itself from `.agents/skills/`, so no adapter is needed to reach it. Claude does not, which is why the installer also links `.claude/skills/kis`. On any host, the command files are also plain instructions: an agent can be told to follow `.agents/skills/kis/commands/sync.md` directly.
 
-In Claude the skill and the commands are separate entries with the same name. `/kis` runs the skill, which is the whole loop and the path the model takes when it triggers KIS on its own. `/kis:start` and its siblings enter one step. Both are expected; neither replaces the other.
+In Claude the skill and the commands are separate entries with the same name. `/kis` runs the skill, which is the whole loop and what the model loads when the user says kis. `/kis:start` and its siblings enter one step. Both are expected; neither replaces the other.
 
 ## Re-Anchor Layer
 

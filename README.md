@@ -2,9 +2,10 @@
 
 KIS is an Agent Skill for project memory and execution discipline. It works in Claude, Pi, OpenCode, Codex, and Antigravity.
 
-- **Knowledge**: stable facts, architecture, constraints, rules, durable decisions, and `project.md`: what the product is today
-- **Intent**: goals, PRDs, plans, acceptance criteria, approved direction, and `compass.md`: where the product is going (why it exists, who it serves, vision, North Star, principles, what not to build, POC versus MVP)
-- **State**: branch, current task, blocker, commands, proof, next action
+- **Knowledge**: stable facts, architecture, design direction, constraints, rules, durable decisions, `project.md` (purpose, audience, problem), and `compass.md`: where the product is going (vision, North Star, principles, what not to build, POC versus MVP)
+- **Intent**: goals, PRDs, plans, acceptance criteria, user stories, backlog, and `private/` for notes git ignores
+- **Reality**: what shipped: features, their behavior, known defects, and `overview.md` summarizing the features
+- **State**: branches, worktrees, current tasks, blockers, commands, proof, next action
 
 The skill makes an agent recover context before acting, interview you before non-trivial work, verify with proof before calling anything done, and keep project memory synchronized.
 
@@ -67,13 +68,13 @@ Use kis. Recover this project and tell me the current task, blocker, proof, and 
 | Audit memory | `/kis:check` | `/kis-check` | `/prompts:kis-check` |
 | Bootstrap `kis/` | `/kis:init` | `/kis-init` | `/prompts:kis-init` |
 
-`/kis:init` also writes `kis/intent/compass.md`, where the product is going, beside `kis/knowledge/project.md`, what it is today. `/kis:plan` reads both. In a project set up before the compass existed, `/kis:init` adds just the compass.
+`/kis:init` writes `kis/knowledge/project.md`, what the product is for, and `kis/knowledge/compass.md`, where it is going, plus `kis/reality/overview.md` once something has shipped. `/kis:plan` reads project and compass. In a project set up before these existed, `/kis:init` adds just the missing ones.
 
 Antigravity supports rules, skills, plugins, hooks, and MCP, but not custom slash commands. Ask for the skill and name the step, or point it at `.agents/skills/kis/commands/sync.md` directly.
 
-In Claude you get two entries with the same name, and both are meant to be there. `/kis` is the skill: the whole loop, and what Claude reaches for on its own. `/kis:start` and its siblings are the per-step commands.
+In Claude you get two entries with the same name, and both are meant to be there. `/kis` is the skill: the whole loop, and what Claude loads when you say kis. `/kis:start` and its siblings are the per-step commands.
 
-Memory lives in the consuming project under `kis/knowledge/`, `kis/intent/`, and `kis/state/`.
+Memory lives in the consuming project under `kis/knowledge/`, `kis/intent/`, `kis/reality/`, and `kis/state/`.
 
 ## Anti-Drift
 

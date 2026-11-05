@@ -5,7 +5,7 @@
   },
   {
     "query": "Before we implement, recover the project memory and help me choose fast vs phase mode.",
-    "should_trigger": true
+    "should_trigger": false
   },
   {
     "query": "The repo already has kis/state/current.md. Read it and continue from the resume pointer.",
@@ -13,7 +13,7 @@
   },
   {
     "query": "We need to update Knowledge, Intent, and State after this architecture decision.",
-    "should_trigger": true
+    "should_trigger": false
   },
   {
     "query": "Run the build and tell me whether it passes.",

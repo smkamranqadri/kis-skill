@@ -25,7 +25,6 @@ PICK -> IMPLEMENT -> VERIFY/REVIEW -> RESOLVE -> INTEGRATION CHECK -> FINISH
 
 - Implement only the current scope. No unrelated changes.
 - Keep each change small enough to review.
-- Use a specialist when it reduces real risk and one is available. If a matched specialist is unavailable, say so and checkpoint instead of pretending it ran.
 - For visible UI, inspect the actual UI. A text description is not acceptance.
 
 ## Proof Before Done

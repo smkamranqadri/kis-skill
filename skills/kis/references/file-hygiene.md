@@ -23,6 +23,7 @@ Examples:
 ```text
 knowledge/
   project.md
+  compass.md
   technical.md
   rules.md
 ```
@@ -38,6 +39,14 @@ knowledge/
 
 Prefer names that help recovery. Avoid clever names.
 
+## Reality
+
+`reality/overview.md` summarizes the shipped features. A feature, or a group of features, gets its own file once it is worth describing. Known defects in what shipped go in `reality/defects.md`; remove one when its fix ships.
+
+## Private Notes
+
+Before writing to `kis/intent/private/`, make sure `.gitignore` covers it: those notes must never be committed.
+
 ## State Hygiene
 
 On direction or status changes:
@@ -50,11 +59,12 @@ On direction or status changes:
 
 State should carry:
 
-- active branch
+- active branch, and the worktree when it is not the main one
 - how to run it, as a `How to run:` line (`Run:` is reserved, see `SKILL.md`)
 - current task
 - current blocker
 - next action
+- a `Stamp:` line: the verbatim output of `scripts/state-stamp.sh <project root>` (the directory that holds `kis/`), run last in a sync, after the State rewrite is final, with no markdown around it and one `Stamp:` line only
 
 Completed ledgers, resolved findings, and superseded plans belong in git history or short Intent notes, not lingering in State.
 
@@ -68,7 +78,8 @@ Run a consistency sweep when:
 - implementation approach changes
 - task status changes materially
 - deployment status changes
-- specialist reports KIS-relevant updates
+- a delegated agent reports KIS-relevant updates
+- a feature ships
 
 Rules:
 
@@ -94,6 +105,7 @@ Actions:
 - dedupe repeated facts
 - relocate stable facts from State to Knowledge
 - relocate plans from State to Intent
+- relocate the lasting description of a shipped plan to Reality
 - mark old plans `SUPERSEDED - see <new plan>`
 - prune obsolete blockers, stale notes, old ledgers, and outdated next items
 

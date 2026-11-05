@@ -12,7 +12,8 @@ KIS is this project's operational memory under `kis/`:
 ```text
 Knowledge = stable facts and rules
 Intent    = goals, plans, acceptance criteria
-State     = current operational reality
+Reality   = what shipped
+State     = what is happening now
 ```
 
 Full instructions: `.agents/skills/kis/SKILL.md`.
@@ -23,14 +24,15 @@ Full instructions: `.agents/skills/kis/SKILL.md`.
 2. Read `kis/state/*` first.
 3. If State has a `Run: <description>; live record at <path>` line, read the head (about 60 lines) of the live record it names and take Task and Next from there. Say "run active, live record at <path>" in the report. If that path does not exist, report it as a contradiction.
 4. Read only the `kis/intent/*` relevant to `$ARGUMENTS` or to the current State task.
-5. Read only the `kis/knowledge/*` needed to act.
+5. Read only the `kis/knowledge/*` and `kis/reality/*` needed to act.
 6. Inspect the repository only where State or Intent is unclear or looks stale. If the anchor printed a `Stale State` line (or `.agents/skills/kis/scripts/state-stamp.sh --check` prints one), the code changed after the last sync: inspect the repo before trusting Task and Next, and say so in the report.
-7. Resolve contradictions with the truth hierarchy: State, then Intent, then Knowledge, then conversation, then repository inspection.
+7. Resolve contradictions with the truth hierarchy: State, then Intent, then Reality, then Knowledge, then conversation, then repository inspection.
 
 ## Report
 
 ```text
 Branch:
+Worktree:
 Task:
 Mode:
 Command:
@@ -41,8 +43,9 @@ Next:
 
 Then add:
 
+- each other worktree's Branch, Task, and Next, when State has `## <worktree>` blocks
 - anything in KIS that contradicts the repository
-- anything in State that is stale and should move to Knowledge or Intent
+- anything in State that is stale and should move to Knowledge, Reality, or Intent
 - the smallest work mode that fits the next action (Fast, Standard, or Phase)
 
 ## Stop Condition

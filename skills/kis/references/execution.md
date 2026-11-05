@@ -1,6 +1,6 @@
 # KIS Execution
 
-Use this for written plans, Standard Mode with meaningful risk, and Phase Mode.
+Use this for written plans, Standard Mode with meaningful risk, Phase Mode, and orchestrated runs.
 
 ## Setup
 
@@ -12,7 +12,6 @@ Before execution:
 4. Raise blocking contradictions before starting.
 5. Choose the smallest capable agent/model for each role.
 6. Record the execution approach in State when useful.
-7. Select specialist skills for the current phase.
 
 ## Plan Self-Review
 
@@ -26,7 +25,6 @@ Before coding, check:
 - Is the task small enough to execute safely?
 - Can a fresh agent understand it without the full conversation?
 - Does the plan avoid unrelated changes?
-- Is the right specialist selected, if any?
 
 If the plan is weak, improve it before implementation. This is the author's own pass; the external review and its record follow it (see `SKILL.md`, PLAN).
 
@@ -73,7 +71,6 @@ The implementer should receive:
 - acceptance criteria
 - commands to run
 - Knowledge/Intent constraints
-- specialist skill, if needed
 - instruction not to modify `kis/`
 
 ### VERIFY / REVIEW
@@ -145,5 +142,17 @@ When all tasks are complete:
 3. Confirm acceptance criteria.
 4. Clean stale State.
 5. Update Intent if the plan outcome changed.
-6. Update Knowledge only for stable new understanding.
-7. Prepare a concise final summary.
+6. Describe what shipped in Reality.
+7. Update Knowledge only for stable new understanding.
+8. Prepare a concise final summary.
+
+## Orchestrated Runs
+
+A `Run: <description>; live record at <path>` line in State means an orchestrator is mid-run, and the file it names is the live record for task status and the next action.
+
+- While the run is active, take the current Task and Next from the live record, not from State or the conversation.
+- A live-record path that does not exist is a contradiction to report.
+- State keeps the pointer and one proof line per merged unit of work.
+- KIS steps never copy task status from the live record into State and never remove the `Run:` line.
+- The orchestrator removes the `Run:` line when the run closes, then flushes the run's decisions to Intent.
+- `Run:` is reserved for this pointer. State's line on how to run the project is `How to run:`, and a `Run:` line that names no live record is not a pointer.

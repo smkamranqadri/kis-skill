@@ -251,7 +251,10 @@ for env_args in "LC_ALL=C.UTF-8" "-u LANG -u LC_ALL -u LC_CTYPE"; do
 done
 
 # The docs reserve Run: for the pointer the anchor shows, and name the how-to-run line.
-grep -qF '`Run:` is reserved for this pointer: State'"'"'s line on how to run the project is `How to run:`, and a `Run:` line that names no live record is not a pointer.' "$package_dir/SKILL.md" || fail "SKILL.md does not reserve Run:"
+grep -qF '`Run:` is reserved for this pointer; the how-to-run line is `How to run:`.' "$package_dir/SKILL.md" || fail "SKILL.md does not reserve Run:"
+grep -qxF -- '- `Run:` is reserved for this pointer. State'"'"'s line on how to run the project is `How to run:`, and a `Run:` line that names no live record is not a pointer.' "$package_dir/references/execution.md" || fail "execution.md (Orchestrated Runs) does not own the Run: reservation"
+grep -qxF '## Orchestrated Runs' "$package_dir/references/execution.md" || fail "execution.md lost its Orchestrated Runs section"
+grep -qF 'Read [execution.md](references/execution.md) (Orchestrated Runs) before changing State.' "$package_dir/SKILL.md" || fail "SKILL.md does not point at Orchestrated Runs"
 grep -qF -- '- how to run it, as a `How to run:` line' "$package_dir/references/file-hygiene.md" || fail "file-hygiene.md does not name the How to run: line"
 grep -qF 'and so is a `Run:` line that names no live record' "$package_dir/commands/check.md" || fail "check.md does not flag a Run: line without a live record"
 

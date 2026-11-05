@@ -7,20 +7,23 @@ argument-hint: [task or goal]
 
 Run the QUESTION, CHALLENGE, STRUCTURE, and PLAN steps of the KIS loop for `$ARGUMENTS`. Do not implement anything in this command.
 
-Full instructions: `.agents/skills/kis/SKILL.md`. Specialist routing: `.agents/skills/kis/references/specialist-routing.md`.
+Full instructions: `.agents/skills/kis/SKILL.md`.
 
 ## Steps
 
-1. Load the KIS context this task needs: State first, then relevant Intent, then only required Knowledge. Read `kis/knowledge/project.md` and `kis/intent/compass.md` when they exist.
+1. Load the KIS context this task needs: State first, then relevant Intent, then only required Knowledge and Reality. Read `kis/knowledge/project.md` and `kis/knowledge/compass.md` when they exist.
 2. QUESTION: interview the user until you reach a shared understanding. One question at a time, waiting for each answer. Walk down each branch of the decision tree, resolving dependencies one by one. Give your recommended answer with every question. Look up any fact that KIS, the repository, or a tool can answer instead of asking it. Do not continue to the plan until the user confirms the understanding is shared.
 3. CHALLENGE: name weak requirements, risky assumptions, missing edge cases, scope creep, and approaches heavier than the goal needs. Give the practical tradeoff and a clearer path.
 4. STRUCTURE: classify every new fact into exactly one layer.
 
 ```text
-Knowledge = what is true / how things work
+Knowledge = what is decided and stable
 Intent    = what we want / plan to do
+Reality   = what shipped
 State     = what is happening now
 ```
+
+A bug in what shipped is a defect in Reality, a planned fix goes on the Intent backlog, and a bug in unshipped current work stays in State.
 
 5. PLAN only enough to execute safely.
 
@@ -33,11 +36,12 @@ Files likely involved:
 Acceptance checks:
 Risks and assumptions:
 Verification method:
-Specialist or review needed:
+Review needed:
 Work mode: Fast | Standard | Phase
 KIS writes this plan implies:
 - Knowledge:
 - Intent:
+- Reality:
 - State:
 ```
 

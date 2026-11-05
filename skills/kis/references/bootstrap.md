@@ -12,10 +12,11 @@ Use this when `kis/` does not exist or when joining an existing project whose KI
 kis/
   knowledge/
   intent/
+  reality/
   state/
 ```
 
-4. Write the smallest useful Knowledge, Intent, and State files: what the product is today in `knowledge/project.md`, where it is going in `intent/compass.md` (see Compass).
+4. Write the smallest useful Knowledge, Intent, and State files: purpose, audience, and problem in `knowledge/project.md`, where the product is going in `knowledge/compass.md` (see Compass). Reality starts when something ships.
 5. Ask the user to approve the next work mode and first phase before non-trivial implementation.
 
 Do not create empty files.
@@ -36,13 +37,11 @@ Then walk the rest one at a time, in dependency order: who it is for and the pro
 
 ## Compass
 
-`kis/knowledge/project.md` says what the product is today; `kis/intent/compass.md` says where it is going. The vision stays stable while features, technology, and experiments change, so keep those out of the compass.
+`kis/knowledge/project.md` says what the product is for, `kis/knowledge/compass.md` where it is going, and `kis/reality/overview.md` what has shipped. The vision stays stable while features, technology, and experiments change, so keep those out of the compass.
 
 ```text
 # Compass: <product>
 
-## Why
-## Who and problem
 ## Vision
 ## North Star
 ## Principles
@@ -63,14 +62,14 @@ When joining a project with KIS already present:
 ```text
 I'll recover the project from KIS first.
 
-I'll read State, then relevant Intent and Knowledge, inspect the repo only where needed, and continue from the current resume pointer.
+I'll read State, then relevant Intent, Reality, and Knowledge, inspect the repo only where needed, and continue from the current resume pointer.
 ```
 
 Then:
 
 1. Read State.
 2. Read relevant Intent.
-3. Load only necessary Knowledge.
+3. Load only necessary Reality and Knowledge.
 4. Inspect the repository only where required.
 5. Summarize current understanding briefly.
 6. Ask questions only if blocked.
@@ -86,12 +85,16 @@ Create only when useful:
 kis/
   knowledge/
     project.md
+    compass.md
     technical.md
     rules.md
   intent/
     PRD.md
-    compass.md
     ImplementationPlan.md
+    backlog.md
+  reality/
+    overview.md
+    defects.md
   state/
     current.md
 ```
@@ -104,12 +107,15 @@ For medium or large projects:
 
 ```text
 PRD                 -> intent/
-Product direction   -> intent/compass.md
+Product direction   -> knowledge/compass.md
 Tech spec           -> knowledge/
 App flow            -> intent/
-Design direction    -> intent/
+Design direction    -> knowledge/
 Schema              -> knowledge/
 Implementation plan -> intent/
+Backlog             -> intent/
+Feature docs        -> reality/
+Known defects       -> reality/defects.md
 Tracker             -> state/
 Rules               -> knowledge/
 ```
