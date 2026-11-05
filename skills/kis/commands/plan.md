@@ -47,7 +47,7 @@ KIS writes this plan implies:
 
 ## Stop Condition
 
-For Fast Mode, offer to execute immediately. For Standard or Phase Mode, write the plan into `kis/intent/` only after the user approves the scope, then run the review below, then stop.
+For Fast Mode, offer to execute immediately. For Standard or Phase Mode, write the plan into `kis/intent/` only after the user approves the scope, in plain language as `.agents/skills/kis/references/writing.md` sets out, then run the review below, then stop.
 
 ## Review
 

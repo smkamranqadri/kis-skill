@@ -28,7 +28,7 @@ kis/
   state/
 ```
 
-5. Write the smallest useful files. Do not create empty files or placeholder templates.
+5. Write the smallest useful files, in plain language as `.agents/skills/kis/references/writing.md` sets out. Do not create empty files or placeholder templates.
 6. Put each fact in exactly one layer. Purpose, audience, and problem go to `kis/knowledge/project.md`; where the product is going goes to `kis/knowledge/compass.md`, in the shape `bootstrap.md` (Compass) gives; what has shipped goes to `kis/reality/overview.md`. A new project with nothing shipped has no Reality yet.
 
 ## Report

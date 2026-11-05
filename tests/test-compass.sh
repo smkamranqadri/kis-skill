@@ -68,6 +68,22 @@ has "$plan_md" '- Reality:' || fail "plan.md output omits the Reality write"
 has "$pkg/references/file-hygiene.md" 'Before writing to `kis/intent/private/`, make sure `.gitignore` covers it: those notes must never be committed.' || fail "file-hygiene.md lost the private-notes rule"
 contains "$pkg/references/file-hygiene.md" '- a `Stamp:` line: the verbatim output of `scripts/state-stamp.sh <project root>`' || fail "file-hygiene.md does not own the Stamp line"
 
+# writing.md owns the plain-language rules; SKILL.md points to it and every writing command restates it.
+writing_md="$pkg/references/writing.md"
+[[ -f "$writing_md" ]] || fail "references/writing.md is missing"
+contains "$writing_md" 'follow the principles of ISO 24495-1:2023 (plain language) and the sentence rules of ASD-STE100 (Simplified Technical English)' || fail "writing.md does not name its standards"
+writing_heads="$(grep '^## ' "$writing_md" | paste -sd '|' -)"
+[[ "$writing_heads" == "## Relevant|## Findable|## Understandable|## Usable|## Example" ]] || fail "writing.md sections changed: $writing_heads"
+has "$writing_md" '- Keep a sentence to 20 words for an instruction and 25 for a description.' || fail "writing.md lost the sentence-length rule"
+has "$writing_md" '- Give one instruction per sentence.' || fail "writing.md lost the one-instruction rule"
+has "$writing_md" '- Use the active voice, so the sentence says who does what.' || fail "writing.md lost the active-voice rule"
+contains "$skill_md" 'Before writing to `kis/`, read [writing.md](references/writing.md).' || fail "SKILL.md does not point to writing.md"
+for cmd in init plan act sync; do
+  [[ "$(grep -c 'in plain language as `.agents/skills/kis/references/writing.md` sets out' "$pkg/commands/$cmd.md")" == "1" ]] || fail "$cmd.md does not restate the writing rule"
+done
+contains "$pkg/commands/check.md" '8. Readability: does any file break `.agents/skills/kis/references/writing.md`?' || fail "check.md does not audit readability"
+has "$pkg/commands/check.md" 'Hard to read:' || fail "check.md report has no readability section"
+
 # The command lists name no compass command.
 project="$tmp_dir/project"
 mkdir -p "$project/.agents/skills" "$project/kis/state"

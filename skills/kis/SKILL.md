@@ -19,6 +19,8 @@ kis/
 
 If `kis/` does not exist, read [bootstrap.md](references/bootstrap.md).
 
+Write every KIS file in plain language, so a person can read it quickly and act on it. Before writing to `kis/`, read [writing.md](references/writing.md).
+
 ## Truth Hierarchy
 
 ```text

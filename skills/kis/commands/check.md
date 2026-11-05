@@ -18,6 +18,7 @@ Full instructions: `.agents/skills/kis/SKILL.md`. Cleanup rules: `.agents/skills
 5. Recovery: can State answer branch, worktree, task, command, blocker, and next without reading anything else? A State with a `Run:` pointer line passes: the pointer answers task and next.
 6. Size: is `kis/state/current.md` past roughly 80 lines, or is any file hard to skim?
 7. Proof: is anything marked done without recorded proof?
+8. Readability: does any file break `.agents/skills/kis/references/writing.md`? Look for a sentence past 20 words for an instruction or 25 for a description, two instructions in one sentence, a passive sentence that hides who acts, one thing named two ways, or detail before the answer.
 
 ## Report
 
@@ -32,6 +33,9 @@ Misplaced facts:
 
 Stale content:
 - <file> - <what to prune>
+
+Hard to read:
+- <file> - <sentence or section> - <rule it breaks>
 
 Missing:
 - <what a fresh agent could not recover>

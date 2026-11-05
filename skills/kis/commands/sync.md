@@ -21,7 +21,7 @@ Did Reality change?    feature shipped, shipped behavior changed, defect found o
 Did State change?      branch, task, status, blocker, command, proof, next action
 ```
 
-3. Write each fact into exactly one layer. Prefer updating an existing file over creating one.
+3. Write each fact into exactly one layer, in plain language as `.agents/skills/kis/references/writing.md` sets out. Prefer updating an existing file over creating one.
 4. Rewrite State in place. Do not append new truth under old truth.
 5. Move stable facts out of State into Knowledge, shipped behavior into Reality, and plans into Intent. When a plan ships, describe the feature in Reality and mark the plan done. A bug in what shipped is a defect in Reality, a planned fix goes on the Intent backlog, and a bug in unshipped current work stays in State.
 6. Mark superseded plans `SUPERSEDED - see <new plan>`.

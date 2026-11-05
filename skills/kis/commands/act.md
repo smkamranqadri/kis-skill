@@ -39,7 +39,7 @@ Only when verification is clean:
 
 - mark the task done in the plan by ticking `[ ]` to `[x]` or adding a `Status:` line, nothing else: any other edit voids the plan review
 - record proof in State
-- rewrite `Now`, `Next`, and `Status` in State
+- rewrite `Now`, `Next`, and `Status` in State, in plain language as `.agents/skills/kis/references/writing.md` sets out
 - report the changed files, commands run, and proof
 - name the next task
 

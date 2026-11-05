@@ -7,7 +7,7 @@ KIS is an Agent Skill for project memory and execution discipline. It works in C
 - **Reality**: what shipped: features, their behavior, known defects, and `overview.md` summarizing the features
 - **State**: branches, worktrees, current tasks, blockers, commands, proof, next action
 
-The skill makes an agent recover context before acting, interview you before non-trivial work, verify with proof before calling anything done, and keep project memory synchronized.
+The skill makes an agent recover context before acting, interview you before non-trivial work, verify with proof before calling anything done, and keep project memory synchronized. Agents write that memory in plain language, following the principles of ISO 24495-1 (plain language) and the sentence rules of ASD-STE100 (Simplified Technical English), so a person can read it quickly.
 
 ## Install
 
