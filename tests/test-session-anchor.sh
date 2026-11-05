@@ -105,13 +105,30 @@ run_line="$(grep '^Run: ' <<< "$out")"
 (( ${#desc} + ${#pointer} > 200 )) || fail "test setup: the Run value is not over 200 characters"
 [[ "$run_line" == "Run: orchestrated release of the fictional gadget"*"...$pointer" ]] || fail "long Run lost its pointer or its description: $run_line"
 (( ${#run_line} - 5 <= 200 )) || fail "long Run not capped: $(( ${#run_line} - 5 )) chars"
-# A pointer path longer than the cap stays whole; a long Run without a pointer is cut like any field.
+# A pointer path longer than the cap stays whole.
 longpath="$(printf 'p%.0s' $(seq 1 220))"
 printf -- '- Run: short description; live record at .orch/%s/ledger.md\n- Task: tune\n' "$longpath" > "$root/kis/state/current.md"
 [[ "$("$H" "$root" | grep '^Run: ')" == "Run: ...; live record at .orch/$longpath/ledger.md" ]] || fail "an over-long pointer path was cut"
-printf -- '- Run: %s\n- Task: tune\n' "$long" > "$root/kis/state/current.md"
-run_line="$("$H" "$root" | grep '^Run: ')"
-[[ "$run_line" == *"..." && ${#run_line} -le 205 ]] || fail "long Run without a pointer not cut at the end: ${#run_line} chars"
+
+# 5b2. Run is the orchestrator pointer only. A `Run:` line that names no live record (an old
+#      how-to-run line) is not shown; a pointer before or after it is shown whole.
+printf -- '- Run: the fictional gadget needs USB with debugging on\n- Task: tune\n' > "$root/kis/state/current.md"
+out="$("$H" "$root")"
+[[ "$(grep -c '^Run: ' <<< "$out")" == "0" ]] || fail "a Run line without a live record was shown as a pointer: $out"
+[[ "$(grep -c '^Task: tune$' <<< "$out")" == "1" ]] || fail "Task lost beside a non-pointer Run line: $out"
+printf -- '- Run: the fictional gadget needs USB\n  with debugging on\n- Task: tune\n- Run: orch run active; live record at .orch/ledger.md\n' > "$root/kis/state/current.md"
+[[ "$("$H" "$root" | grep '^Run: ')" == "Run: orch run active; live record at .orch/ledger.md" ]] || fail "a pointer after a non-pointer Run line was not shown"
+printf -- '- Run: orch run active; live record at .orch/ledger.md\n- Task: tune\n- Run: the fictional gadget needs USB\n  with debugging on\n' > "$root/kis/state/current.md"
+[[ "$("$H" "$root" | grep '^Run: ')" == "Run: orch run active; live record at .orch/ledger.md" ]] || fail "a non-pointer Run line after the pointer changed it"
+printf -- '- Run: first run; live record at .orch/one.md\n- Run: second run; live record at .orch/two.md\n  more text\n- Task: tune\n' > "$root/kis/state/current.md"
+out="$("$H" "$root")"
+[[ "$(grep -c '^Run: ' <<< "$out")" == "1" && "$(grep '^Run: ' <<< "$out")" == "Run: first run; live record at .orch/one.md" ]] || fail "two pointers did not keep the first whole: $out"
+printf -- '- Task: tune\r\n- Run: orch run active; live record at .orch/ledger.md\r\n' > "$root/kis/state/current.md"
+[[ "$("$H" "$root" | grep '^Run: ')" == "Run: orch run active; live record at .orch/ledger.md" ]] || fail "a CRLF pointer as the last field was not shown whole"
+printf -- '- Task: tune\n- Run: orch run active; live record at .orch/ledger.md' > "$root/kis/state/current.md"
+[[ "$("$H" "$root" | grep '^Run: ')" == "Run: orch run active; live record at .orch/ledger.md" ]] || fail "a pointer on a last line without a newline was not shown"
+printf -- '- Run: orch run active;\n  live record at .orch/ledger.md\n- Task: tune\n' > "$root/kis/state/current.md"
+[[ "$("$H" "$root" | grep '^Run: ')" == "Run: orch run active; live record at .orch/ledger.md" ]] || fail "a pointer split over a continuation line was not shown"
 
 # 5c. A State with no summary fields gets a head whose lines are each capped, so the closing pointer
 #     line is never pushed past what a host keeps (cmd cuts hook context at 4000 characters).
@@ -232,5 +249,10 @@ for env_args in "LC_ALL=C.UTF-8" "-u LANG -u LC_ALL -u LC_CTYPE"; do
   [[ "$task" == *'...' ]] || fail "long Task not cut under [$env_args]: $task"
   printf '%s' "$task" | LC_ALL=C.UTF-8 iconv -f UTF-8 -t UTF-8 >/dev/null 2>&1 || fail "cut split a multibyte character under [$env_args]"
 done
+
+# The docs reserve Run: for the pointer the anchor shows, and name the how-to-run line.
+grep -qF '`Run:` is reserved for this pointer: State'"'"'s line on how to run the project is `How to run:`, and a `Run:` line that names no live record is not a pointer.' "$package_dir/SKILL.md" || fail "SKILL.md does not reserve Run:"
+grep -qF -- '- how to run it, as a `How to run:` line' "$package_dir/references/file-hygiene.md" || fail "file-hygiene.md does not name the How to run: line"
+grep -qF 'and so is a `Run:` line that names no live record' "$package_dir/commands/check.md" || fail "check.md does not flag a Run: line without a live record"
 
 echo "session-anchor tests: pass"

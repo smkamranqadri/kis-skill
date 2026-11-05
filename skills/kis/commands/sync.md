@@ -15,7 +15,7 @@ Full instructions: `.agents/skills/kis/SKILL.md`. File rules: `.agents/skills/ki
 2. Ask the three questions:
 
 ```text
-Did Knowledge change?  new stable fact, rule, constraint, or durable decision
+Did Knowledge change?  built reality, outside fact, rule, constraint, or durable technical decision
 Did Intent change?     goal, plan, acceptance criteria, or approved direction
 Did State change?      branch, task, status, blocker, command, proof, next action
 ```
@@ -24,10 +24,11 @@ Did State change?      branch, task, status, blocker, command, proof, next actio
 4. Rewrite State in place. Do not append new truth under old truth.
 5. Move stable facts out of State into Knowledge, and plans out of State into Intent.
 6. Mark superseded plans `SUPERSEDED - see <new plan>`.
-7. Grep `kis/` for terms that changed and remove stale references and contradictions.
-8. Record proof in State when it helps recovery. Do not paste implementation history into KIS.
-9. If State has a `Run:` line, keep it. Do not rewrite Task, Next or status from the conversation or the live record it names; add only proof lines for merged work. Leave the run's decisions in the live record: they reach Intent when the orchestrator closes the run.
-10. Last, after the State rewrite is final, run `.agents/skills/kis/scripts/state-stamp.sh <project root>` (the directory that holds `kis/`, passed explicitly) and write its output verbatim as the `Stamp:` line near the top of State, no markdown around it, replacing any existing one (one `Stamp:` line only). The stamp lets the next session see code changes made after this sync.
+7. When work built from the compass ships, record it as `.agents/skills/kis/references/product-compass.md` (When Direction Becomes Reality) says: built reality to Knowledge, while the compass keeps the decision as the reason; an experiment's result to State, with a prompt to revise the compass through the compass command. Do not edit the compass here.
+8. Grep `kis/` for terms that changed and remove stale references and contradictions.
+9. Record proof in State when it helps recovery. Do not paste implementation history into KIS.
+10. If State has a `Run:` pointer line (one naming a live record), keep it. Do not rewrite Task, Next or status from the conversation or the live record it names; add only proof lines for merged work. Leave the run's decisions in the live record: they reach Intent when the orchestrator closes the run.
+11. Last, after the State rewrite is final, run `.agents/skills/kis/scripts/state-stamp.sh <project root>` (the directory that holds `kis/`, passed explicitly) and write its output verbatim as the `Stamp:` line near the top of State, no markdown around it, replacing any existing one (one `Stamp:` line only). The stamp lets the next session see code changes made after this sync.
 
 ## Report
 

@@ -2,8 +2,8 @@
 
 KIS is an Agent Skill for project memory and execution discipline. It works in Claude, Pi, OpenCode, Codex, and Antigravity.
 
-- **Knowledge**: stable facts, architecture, constraints, rules, durable decisions
-- **Intent**: goals, PRDs, plans, acceptance criteria, approved direction, and the Product Compass (`kis/intent/compass.md`: why the product exists, who it serves, vision, boundaries, POC versus MVP)
+- **Knowledge**: what is true now (code, architecture, devices, outside facts), constraints, rules, durable technical decisions
+- **Intent**: goals, PRDs, plans, acceptance criteria, approved direction, and the Product Compass (`kis/intent/compass.md`: why the product exists, who it serves, vision, boundaries, POC versus MVP), the only home for product decisions
 - **State**: branch, current task, blocker, commands, proof, next action
 
 The skill makes an agent recover context before acting, interview you before non-trivial work, verify with proof before calling anything done, and keep project memory synchronized.
@@ -31,7 +31,7 @@ That gives the project:
 AGENTS.md                  KIS block between <!-- kis:anchor:start|end --> markers
 ```
 
-Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.12.1` to pin a version.
+Useful flags: `--force` to replace an existing install, `--no-commands` or `--no-anchor` to skip a layer, `--ref v0.13.0` to pin a version.
 
 This repository holds the source package under `skills/kis/`; nothing here is a live install. The installer copies it to `.agents/skills/kis` in your project, which is where every host looks.
 
@@ -68,7 +68,7 @@ Use kis. Recover this project and tell me the current task, blocker, proof, and 
 | Audit memory | `/kis:check` | `/kis-check` | `/prompts:kis-check` |
 | Bootstrap `kis/` | `/kis:init` | `/kis-init` | `/prompts:kis-init` |
 
-`/kis:compass` is for product direction: it interviews you one question at a time (why the product exists, who it serves, vision, boundaries, what a POC tests versus what an MVP commits to), proposes a Product Compass, and writes `kis/intent/compass.md` only after you confirm. `/kis:plan` reads that compass when a task touches direction or scope. The compass keeps direction steady while features and experiments change; it does not replace the PRD, the plan, or State.
+`/kis:compass` is for product direction: it interviews you one question at a time (why the product exists, who it serves, vision, boundaries, what a POC tests versus what an MVP commits to), proposes a Product Compass, and writes `kis/intent/compass.md` only after you confirm, along with any outside facts it found (research, a provider's rules), which go to Knowledge with a link from the compass. `/kis:init` asks only for facts (what it is, stack, device, constraints, stage) and offers the compass for the rest. `/kis:plan` reads that compass when a task touches direction or scope. The compass keeps direction steady while features and experiments change; it does not replace the PRD, the plan, or State.
 
 Antigravity supports rules, skills, plugins, hooks, and MCP, but not custom slash commands. Ask for the skill and name the step, or point it at `.agents/skills/kis/commands/sync.md` directly.
 

@@ -51,7 +51,7 @@ On direction or status changes:
 State should carry:
 
 - active branch
-- how to run it
+- how to run it, as a `How to run:` line (`Run:` is reserved, see `SKILL.md`)
 - current task
 - current blocker
 - next action

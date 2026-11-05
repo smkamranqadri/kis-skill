@@ -11,11 +11,11 @@ Full instructions: `.agents/skills/kis/SKILL.md`. Cleanup rules: `.agents/skills
 
 ## Checks
 
-1. Structure: does `kis/` hold `knowledge/`, `intent/`, and `state/`, and is every file in the right layer?
+1. Structure: does `kis/` hold `knowledge/`, `intent/`, and `state/`, and is every file in the right layer? Direction in Knowledge (who the product is for, where it is going, a product choice) is a misplaced fact: it belongs in the compass. So is an outside fact (research, a provider's rule) held only in the compass: it belongs in Knowledge, linked from the compass.
 2. Truth: does State contradict Intent, Knowledge, the repository, or the current branch?
 3. Duplication: is any fact stored in more than one place? Task status copied from a `Run:` live record into State is a finding.
-4. Staleness: resolved blockers, completed ledgers, superseded plans, obsolete next actions, dead file or command references. A `Run:` line whose live-record file does not exist is a finding.
-5. Recovery: can State answer branch, task, command, blocker, and next without reading anything else? A State with a `Run:` line passes: the pointer answers task and next.
+4. Staleness: resolved blockers, completed ledgers, superseded plans, obsolete next actions, dead file or command references. A `Run:` line whose live-record file does not exist is a finding, and so is a `Run:` line that names no live record (State's how-to-run line is `How to run:`).
+5. Recovery: can State answer branch, task, command, blocker, and next without reading anything else? A State with a `Run:` pointer line passes: the pointer answers task and next.
 6. Size: is `kis/state/current.md` past roughly 80 lines, or is any file hard to skim?
 7. Proof: is anything marked done without recorded proof?
 

@@ -50,7 +50,11 @@ for phrase in \
   '9. Present the proposed compass:' \
   'Only after explicit confirmation, create or update `kis/intent/compass.md`' \
   'Preserve earlier decisions unless the user explicitly revised them' \
-  'no edits to the PRD, plan, State, or Knowledge.' \
+  'Write nothing else: no edits to the PRD, plan, or State.' \
+  'and list the Knowledge lines it adds or moves.' \
+  'the compass links to it and never holds it alone.' \
+  'Note any direction Knowledge holds' \
+  'Then write the Knowledge lines the proposal listed:' \
   'it is not confirmation of a compass the user has not seen.' \
   'Stop after the compass is written.' \
   'If the user does not confirm, write nothing.'; do
@@ -61,8 +65,11 @@ done
 confirm_line="$(grep -nF '9. Present the proposed compass:' "$command_md" | cut -d: -f1)"
 write_line="$(grep -nF 'Only after explicit confirmation, create or update' "$command_md" | cut -d: -f1)"
 [[ -n "$confirm_line" && -n "$write_line" && "$confirm_line" -lt "$write_line" ]] || fail "the confirmation step must precede the write"
+knowledge_line="$(grep -nF 'Then write the Knowledge lines the proposal listed:' "$command_md" | cut -d: -f1)"
+[[ -n "$knowledge_line" && "$confirm_line" -lt "$knowledge_line" ]] || fail "the confirmation step must precede the Knowledge write"
+[[ "$(grep -c '^Knowledge lines added or moved:$' "$command_md")" == "1" ]] || fail "compass.md report lacks the Knowledge lines"
 
-# The only KIS file the command may write is kis/intent/compass.md.
+# The only KIS file the command names is kis/intent/compass.md; its Knowledge lines go where the proposal says.
 mentioned="$(grep -oP '(?<![A-Za-z0-9_./-])kis/[a-z]+/[A-Za-z0-9_.*-]+\.md' "$command_md" | sort -u)"
 [[ "$mentioned" == "kis/intent/compass.md" ]] || fail "compass.md names a KIS file other than kis/intent/compass.md: $mentioned"
 
@@ -89,6 +96,13 @@ contains "$reference_md" 'Add `## Revisions` with the first revision, not before
 contains "$reference_md" 'Preserve existing decisions.' || fail "reference lost the preserve-decisions rule"
 contains "$reference_md" 'Point to the owner instead of copying.' || fail "reference lost the no-duplication rule"
 contains "$reference_md" 'Stop after writing. Do not start implementing.' || fail "reference lost the stop rule"
+contains "$reference_md" 'Outside facts the interview turns up belong to Knowledge (`SKILL.md`, STRUCTURE). Write each with its source and the date it was read, and link it from the compass bullet' || fail "reference lost the outside-facts-to-Knowledge rule"
+contains "$reference_md" 'When Knowledge already holds direction (who the product is for, where it is going, a product choice), move it into the compass and leave a one-line pointer in Knowledge.' || fail "reference lost the move-direction-out-of-Knowledge rule"
+contains "$reference_md" 'The only other writes are the Knowledge lines Ownership names' || fail "reference lost the bound on compass writes"
+contains "$reference_md" 'Do not edit the PRD, plan, or State from the compass step.' || fail "reference lost the no-edit list"
+has "$reference_md" '## When Direction Becomes Reality' || fail "reference lost the When Direction Becomes Reality section"
+contains "$reference_md" '- Built reality goes to Knowledge,' || fail "reference lost the built-reality rule"
+contains "$reference_md" "- An experiment's result goes to State, with a prompt to revise the compass through the compass command." || fail "reference lost the experiment-result rule"
 has "$reference_md" '## Revisions' || fail "reference file shape lost the Revisions section"
 
 # One owner per fact: the tags and the rules live in the reference, not in SKILL.md.
@@ -98,6 +112,24 @@ done
 contains "$skill_md" '[product-compass.md](references/product-compass.md)' || fail "SKILL.md does not link the reference"
 contains "$skill_md" '`compass` (product direction' || fail "SKILL.md does not list the compass command"
 [[ "$(grep -c 'compass' "$skill_md")" -le 4 ]] || fail "SKILL.md grew past a short compass pointer"
+
+# Product decisions have one home: SKILL.md owns the boundary, and init, sync and check follow it.
+contains "$skill_md" 'Product decisions (who the product serves, why, where it is going) belong only to the compass, never to Knowledge.' || fail "SKILL.md lost the product-decisions boundary"
+contains "$skill_md" 'durable technical decisions' || fail "SKILL.md Knowledge no longer limits decisions to technical ones"
+contains "$skill_md" 'durable decisions' && fail "SKILL.md Knowledge still claims durable decisions of any kind"
+init_md="$pkg/commands/init.md"
+bootstrap_md="$pkg/references/bootstrap.md"
+contains "$init_md" 'interview the user for facts only: what it is in one line, stack, device or platform, hard constraints, and current stage.' || fail "init.md does not limit the interview to facts"
+contains "$init_md" 'Do not ask who it is for, the problem, the vision, or success. That is direction, and the compass command owns it.' || fail "init.md asks direction questions"
+contains "$init_md" 'Offer the compass command for who the product serves, the problem, the vision, and success.' || fail "init.md does not offer the compass"
+contains "$init_md" 'who, problem, success' && fail "init.md still runs the direction interview"
+contains "$bootstrap_md" '2. Do not ask who it is for, the problem, the vision, or what success looks like.' || fail "bootstrap.md asks direction questions"
+contains "$bootstrap_md" '6. Offer the compass command for who the product serves, the problem, the vision, and success.' || fail "bootstrap.md does not offer the compass"
+contains "$bootstrap_md" 'who it is for, the problem, what success looks like, hard constraints' && fail "bootstrap.md first response still walks direction"
+contains "$pkg/commands/sync.md" '(When Direction Becomes Reality) says: built reality to Knowledge,' || fail "sync.md does not place built reality"
+contains "$pkg/commands/sync.md" 'Do not edit the compass here.' || fail "sync.md may edit the compass"
+contains "$pkg/commands/check.md" 'Direction in Knowledge (who the product is for, where it is going, a product choice) is a misplaced fact' || fail "check.md does not flag direction in Knowledge"
+contains "$pkg/commands/check.md" "So is an outside fact (research, a provider's rule) held only in the compass" || fail "check.md does not flag outside facts held only in the compass"
 
 # /kis:plan consults the compass when relevant and does not edit it.
 contains "$plan_md" 'read it and `.agents/skills/kis/references/product-compass.md`' || fail "plan.md does not read the compass"
@@ -180,7 +212,7 @@ if [[ "$pkg" == "$repo_root/skills/kis" ]]; then
       a = e["assertions"]
       abort("#{e["id"]}: needs at least 3 assertions") unless a.is_a?(Array) && a.size >= 3 && a.all? { |x| x.is_a?(String) && !x.strip.empty? }
     end
-    required = %w[compass-new-product compass-existing-direction compass-revise compass-poc-vs-mvp compass-no-invented-evidence compass-no-duplication compass-confirm-before-write plan-uses-compass]
+    required = %w[compass-new-product compass-existing-direction compass-revise compass-poc-vs-mvp compass-no-invented-evidence compass-no-duplication compass-confirm-before-write plan-uses-compass init-facts-only compass-outside-facts-to-knowledge sync-direction-becomes-reality check-direction-in-knowledge]
     missing = required - ids
     abort("missing compass evals: #{missing.join(", ")}") unless missing.empty?
     puts "evals: #{evals.size} cases, #{required.size} compass"

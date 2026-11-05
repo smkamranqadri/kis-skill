@@ -2,7 +2,7 @@
 name: kis
 description: Operate KIS project memory under `kis/`, where Knowledge holds stable facts, Intent holds goals and plans, and State holds the current task, blocker, proof, and next action. Use when the repository has a `kis/` directory, when starting or resuming multi-step work or asking where it left off and what is next, when a decision, plan, blocker, proof, or status needs recording, when the work is product direction (why the product exists, who it serves, vision, boundaries, or what a POC should test versus what an MVP commits to), when choosing how much process a task needs, when project memory has gone stale or contradictory, or when a project needs memory set up from scratch. Skip for trivial one-off work and questions the code already answers.
 metadata:
-  version: "0.12.1"
+  version: "0.13.0"
 ---
 
 # KIS
@@ -11,8 +11,8 @@ KIS is the project's operational memory. Keep it small and synchronized so a fre
 
 ```text
 kis/
-  knowledge/   stable facts: stack, architecture, domain terms, constraints, standards, durable decisions
-  intent/      direction: vision, PRDs, plans, acceptance criteria, design direction
+  knowledge/   what is true now: code, stack, architecture, devices, the outside world, domain terms, constraints, standards, durable technical decisions
+  intent/      direction: product decisions (the compass), PRDs, plans, acceptance criteria, design direction
   state/       current reality: branch, task, blocker, commands, status, proof, next action
 ```
 
@@ -34,7 +34,7 @@ What branch?  What task?  What command?  What blocker?  What's next?
 
 Keep State lean. Stable facts belong in Knowledge, plans belong in Intent.
 
-When State has a `Run: <description>; live record at <path>` line, an orchestrator is mid-run and the file it names is the live record for task status and the next action: while the run is active, take the current Task and Next from it rather than from State or the conversation, and a path that does not exist is a contradiction to report. State keeps the pointer and one proof line per merged unit of work. KIS steps never copy task status from the live record into State and never remove the `Run:` line: the orchestrator removes it when the run closes, then flushes the run's decisions to Intent.
+When State has a `Run: <description>; live record at <path>` line, an orchestrator is mid-run and the file it names is the live record for task status and the next action: while the run is active, take the current Task and Next from it rather than from State or the conversation, and a path that does not exist is a contradiction to report. State keeps the pointer and one proof line per merged unit of work. KIS steps never copy task status from the live record into State and never remove the `Run:` line: the orchestrator removes it when the run closes, then flushes the run's decisions to Intent. `Run:` is reserved for this pointer: State's line on how to run the project is `How to run:`, and a `Run:` line that names no live record is not a pointer.
 
 State carries a `Stamp:` line, written by sync as the helper's output verbatim (run with the project root, no markdown around it), that fingerprints the code outside `kis/`. When the anchor or start reports `Stale State`, the code moved on after the last sync: check State against the repo before trusting Task and Next, and say so in your report.
 
@@ -85,6 +85,8 @@ When replicating an existing product, screen, or workflow, study the reference b
 Done when: every assumption you are relying on has been put to the user.
 
 ### STRUCTURE
+
+Product decisions (who the product serves, why, where it is going) belong only to the compass, never to Knowledge. Facts about the outside world found during direction work, such as research or a provider's rules, go to Knowledge with their source, and the compass links to them.
 
 Done when: every new fact sits in exactly one layer.
 

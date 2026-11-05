@@ -137,7 +137,7 @@
         "Writes kis/intent/compass.md only after the user has seen the proposed compass and explicitly confirmed it, even though they asked to skip the questions",
         "After confirmation, records the confirmed choices (vision, principles, boundaries, strategy) as [decision] and keeps beliefs about the audience and behavior as [hypothesis]",
         "Stops after writing and suggests the plan command instead of implementing",
-        "Does not edit the PRD, plan, State, or Knowledge"
+        "Does not edit the PRD, plan, or State, and writes nothing to Knowledge that the confirmed proposal did not list"
       ]
     },
     {
@@ -150,6 +150,52 @@
         "Does not silently override the Boundary or edit the compass from the plan command",
         "Points to the compass command when the direction is deliberately changed",
         "Places the work as POC or MVP if the user confirms it should proceed"
+      ]
+    },
+    {
+      "id": "init-facts-only",
+      "prompt": "Run /kis:init. This is a new repo for a plant-watering reminder that runs on a spare tablet. Set up the project memory.",
+      "expected_output": "The agent interviews only for facts, one question at a time with a recommended answer: what it is in one line, the stack, the device or platform, hard constraints, and the current stage. It does not ask who it is for, the problem, the vision, or success, writes facts to Knowledge and the stage to State, writes no direction into Knowledge, and offers the compass command for direction before proposing the first work mode.",
+      "assertions": [
+        "Asks only fact questions: what it is, stack, device or platform, constraints, stage",
+        "Does not ask who the product is for, the problem, the vision, or success criteria",
+        "Writes no audience, vision, or future direction into kis/knowledge",
+        "Records the current stage in kis/state rather than kis/knowledge",
+        "Offers the compass command for direction before proposing a work mode"
+      ]
+    },
+    {
+      "id": "compass-outside-facts-to-knowledge",
+      "prompt": "Run /kis:compass. While we talk direction, I looked up two rival products (Fernwhistle and Mossmate, both fictional) and the chat provider's rule that it may not store data from children under 13 without zero data retention. Use those.",
+      "expected_output": "The agent treats the rival products and the provider rule as outside facts. Its proposal lists them as Knowledge lines with their source and the date they were read, and the compass bullets link to those Knowledge lines instead of holding the facts alone. On confirmation it writes kis/intent/compass.md and those Knowledge lines, and nothing in the PRD, plan, or State.",
+      "assertions": [
+        "Lists the outside facts as Knowledge lines in the proposal, each with a source and a read date",
+        "Compass bullets link to the Knowledge lines rather than holding the facts alone",
+        "Writes the Knowledge lines only after the user confirms the proposal",
+        "Does not edit the PRD, plan, or State",
+        "Does not invent details about the rival products beyond what the user gave"
+      ]
+    },
+    {
+      "id": "sync-direction-becomes-reality",
+      "prompt": "Run /kis:sync. We built the server the compass decided on, and it now answers the gadget's voice requests. The POC experiment on reply lag also finished: replies feel fine on the old device.",
+      "expected_output": "The agent records the built server as reality in Knowledge (the technical notes), leaves the compass decision in place as the reason without restating what was built, records the experiment's result in State with a prompt to revise the compass through the compass command, and does not edit the compass itself.",
+      "assertions": [
+        "Writes the built server to kis/knowledge, not to the compass",
+        "Records the experiment result in kis/state",
+        "Prompts the user to revise the compass through the compass command",
+        "Does not edit kis/intent/compass.md"
+      ]
+    },
+    {
+      "id": "check-direction-in-knowledge",
+      "prompt": "Run /kis:check. kis/knowledge/project.md says the product is built for the owner first with a public release in mind, kis/intent/compass.md holds a [fact] bullet with a URL about a rival product that appears nowhere else, and State has a line '- Run: plug the tablet in with debugging on'.",
+      "expected_output": "The agent reports three misplaced or stale facts: direction in Knowledge that belongs in the compass, an outside fact held only in the compass that belongs in Knowledge with a link, and a Run: line that names no live record and should be How to run:. It proposes the smallest cleanup and changes nothing until the user approves.",
+      "assertions": [
+        "Flags the audience and release direction in kis/knowledge as belonging in the compass",
+        "Flags the rival-product fact held only in the compass as belonging in Knowledge",
+        "Flags the Run: line as not a pointer and proposes renaming it How to run:",
+        "Changes nothing before the user approves"
       ]
     }
   ]

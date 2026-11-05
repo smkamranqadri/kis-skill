@@ -56,15 +56,17 @@ Compass                  direction and the reasoning behind it
 PRD / requirements       feature behavior, acceptance criteria, scope of a release
 Plan                     tasks, order, verification
 State                    which stage the project is in now, current task, blocker, next
-Knowledge                stack, architecture, domain terms, constraints
+Knowledge                what is built, stack, architecture, domain terms, constraints, outside facts
 ```
 
 Point to the owner instead of copying. If a PRD or README already states the audience, link to it and record only what the compass adds or disputes.
 
+Outside facts the interview turns up belong to Knowledge (`SKILL.md`, STRUCTURE). Write each with its source and the date it was read, and link it from the compass bullet: `[fact] ... (kis/knowledge/<file>.md, <section>)`. When Knowledge already holds direction (who the product is for, where it is going, a product choice), move it into the compass and leave a one-line pointer in Knowledge.
+
 ## Writing
 
 - Write only after the user confirms the proposed compass. Show the proposal first, concise enough to review in one read. A request to skip the interview, or to write the file directly, shortens the interview; it does not confirm a compass the user has not seen. Propose with recommended answers tagged `[hypothesis]`, and wait.
-- Create or update `kis/intent/compass.md`. Do not create other files, and do not edit the PRD, plan, State, or Knowledge from the compass step.
+- Create or update `kis/intent/compass.md`. The only other writes are the Knowledge lines Ownership names: outside facts added, and direction moved out with a pointer left. List them in the proposal; they are confirmed with it. Prefer an existing Knowledge file. Do not edit the PRD, plan, or State from the compass step.
 - Keep it short: one to three bullets per section, plain language, and omit a section nothing is known about rather than filling it with placeholders.
 - Preserve existing decisions. Change a `[decision]` only when the user explicitly revises it, and record the change under `## Revisions` as one line: date, what changed, why. Do not rewrite or reorder untouched sections.
 - When a stable section would change, say so and get explicit confirmation for that change separately from changes to changeable sections.
@@ -99,3 +101,10 @@ Add `## Revisions` with the first revision, not before.
 ## Planning Use
 
 When a plan touches product direction, scope, priorities, or the POC-to-MVP line, read the compass first. Use it to check scope against Boundaries and Principles, to place work as POC or MVP, and to flag work that contradicts a `[decision]`. A conflict is raised with the user. The plan does not quietly override the compass, and does not edit it: a deliberate change of direction is a compass revision.
+
+## When Direction Becomes Reality
+
+Sync records what the compass led to without editing the compass:
+
+- Built reality goes to Knowledge, for example a new server that now answers requests, in the technical notes. The compass keeps the `[decision]` as the reason and does not restate what was built.
+- An experiment's result goes to State, with a prompt to revise the compass through the compass command. Turning a result into a `[fact]` or changing a `[decision]` is a compass revision.

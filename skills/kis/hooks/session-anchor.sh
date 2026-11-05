@@ -81,8 +81,10 @@ awk_lib='function ucut(s, n,   i, c) {
 # and Next come from a `Label:` line (any bullet marker, indented continuation lines joined, capped
 # at max_field_chars). When a label is absent, Next falls back to the first item under a
 # `## Next` heading and Blocker to the first item under a `## Open` heading: the shape real
-# State files use.
+# State files use. Run is the orchestrator pointer only: a `Run:` line that names no live record
+# (an old how-to-run line) is not shown, and a later pointer line replaces it. The first pointer wins.
 summary="$(LC_ALL=C awk -v max="$max_field_chars" "$awk_lib"'
+BEGIN { tag = "; live record at " }
 function trim(s) { sub(/^[[:space:]]+/, "", s); sub(/[[:space:]]+$/, "", s); return s }
 function add(name, s) {
   s = trim(s)
@@ -104,7 +106,9 @@ function app(name, s) {
     sub(/^[[:space:]]*[-*]?[[:space:]]*/, "", n)
     name = n; sub(/[[:space:]]*:.*/, "", name)
     val = n; sub(/^[^:]*:[[:space:]]*/, "", val)
-    cur = name
+    if (name == "Run" && index(v["Run"], tag) == 0) v["Run"] = ""
+    # A repeated label is ignored with its continuation lines, so they never join the first value.
+    cur = (v[name] == "" ? name : "")
     add(name, val)
     next
   }
@@ -124,11 +128,11 @@ END {
   for (i = 1; i <= 5; i++) {
     n = order[i]
     if (v[n] == "") continue
+    if (n == "Run" && index(v[n], tag) == 0) continue
     s = v[n]
     if (length(s) > max) {
       # The Run pointer is the part the anchor exists to show: keep "; live record at <path>" whole
       # and shorten the description before it.
-      tag = "; live record at "
       cut = 0; pos = 0; rest = s
       while ((k = index(rest, tag)) > 0) { cut = pos + k; pos = cut + length(tag) - 1; rest = substr(s, pos + 1) }
       if (n == "Run" && cut > 0) {

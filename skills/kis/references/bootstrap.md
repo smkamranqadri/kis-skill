@@ -4,9 +4,10 @@ Use this when `kis/` does not exist or when joining an existing project whose KI
 
 ## New Project
 
-1. Interview the user until the foundation is clear: what is being built, who it is for, the problem, success criteria, constraints, and project stage. One question at a time, each with your recommended answer, waiting for the answer before the next.
-2. Challenge assumptions before creating long-lived project memory.
-3. Create only the useful parts of:
+1. Interview the user for the facts the project rests on: what is being built, in one line; the stack; the device or platform; hard constraints; and the current stage. One question at a time, each with your recommended answer, waiting for the answer before the next.
+2. Do not ask who it is for, the problem, the vision, or what success looks like. That is direction, and the compass command owns it ([product-compass.md](product-compass.md)).
+3. Challenge assumptions before creating long-lived project memory.
+4. Create only the useful parts of:
 
 ```text
 kis/
@@ -15,8 +16,8 @@ kis/
   state/
 ```
 
-4. Write the smallest useful Knowledge, Intent, and State files.
-5. Ask the user to approve the next work mode and first phase before non-trivial implementation.
+5. Write the smallest useful files: the facts to Knowledge, the current stage to State. Direction found in a README or other docs stays there for the compass to read.
+6. Offer the compass command for who the product serves, the problem, the vision, and success. Then ask the user to approve the next work mode and first phase before non-trivial implementation.
 
 Do not create empty files.
 
@@ -32,7 +33,7 @@ First question: what are we building?
 My read from what you've said so far: <recommendation>.
 ```
 
-Then walk the rest one at a time, in dependency order: who it is for, the problem, what success looks like, hard constraints, and whether this is a prototype, MVP, or production system. Skip anything the user already answered or the repository already shows. Stop asking as soon as the foundation is decidable, and continue to the work-mode checkpoint.
+Then walk the rest one at a time, in dependency order: the stack, the device or platform, hard constraints, and whether this is a prototype, MVP, or production system. Skip anything the user already answered or the repository already shows. Stop asking as soon as the facts are clear, offer the compass command for direction, and continue to the work-mode checkpoint.
 
 ## Existing Project
 
